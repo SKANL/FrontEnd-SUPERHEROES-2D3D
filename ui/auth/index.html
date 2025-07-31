@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login con Efecto de Cristal Roto</title>
+    <link rel="stylesheet" href="/ui/auth/style.css">
+</head>
+<body>
+    <div id="scene-container"></div>
+
+    <div class="stars" id="stars"></div>
+
+    <div class="login-container" id="loginContainer">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <i>👤</i>
+                <input type="text" id="username" placeholder="Nombre de usuario">
+            </div>
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" id="password" placeholder="Contraseña">
+            </div>
+            <button type="submit" class="login-btn">Ingresar</button>
+        </form>
+        <div class="toggle-link">
+            ¿No tienes cuenta? <a href="#" id="showRegister">Regístrate aquí</a>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        ¡Bienvenido! Has iniciado sesión correctamente.
+    </div>
+
+    <script type="module" src="./login.js"></script>
+</body>
+</html>

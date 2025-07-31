@@ -1,0 +1,203 @@
+/* style.css - Registro, inspirado y combinado con login */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #0c1a2b, #1a2a60, #0d1d41);
+    animation: bgMove 12s ease-in-out infinite alternate;
+}
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+.register-container {
+    position: relative;
+    z-index: 2;
+    background: rgba(200, 230, 255, 0.10);
+    backdrop-filter: blur(18px) brightness(1.1);
+    border-radius: 28px;
+    box-shadow: 0 20px 60px 0 rgba(0, 40, 80, 0.7), 0 0 80px 0 #1a2a60 inset;
+    padding: 48px 36px 36px 36px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    transition: all 0.7s cubic-bezier(.77,.2,.32,1.01);
+    border: 2px solid rgba(200, 230, 255, 0.18);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    animation: registerFadeIn 1.2s cubic-bezier(.77,.2,.32,1.01) 0.2s forwards;
+}
+@keyframes registerFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+h2 {
+    color: #eaf6ff;
+    margin-bottom: 32px;
+    font-size: 32px;
+    text-shadow: 0 0 18px #6ec6ff, 0 0 32px #00eaff;
+    position: relative;
+    z-index: 2;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    animation: titleGlowReg 2.5s ease-in-out infinite alternate;
+}
+@keyframes titleGlowReg {
+    0% { text-shadow: 0 0 18px #6ec6ff; }
+    100% { text-shadow: 0 0 32px #00eaff, 0 0 18px #6ec6ff; }
+}
+.input-group {
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 2;
+}
+.input-group input {
+    width: 100%;
+    padding: 16px 22px 16px 52px;
+    background: rgba(200, 230, 255, 0.13);
+    border: none;
+    border-radius: 50px;
+    color: #eaf6ff;
+    font-size: 18px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(.77,.2,.32,1.01);
+    border: 1.5px solid transparent;
+    box-shadow: 0 0 0px #00eaff inset;
+    font-weight: 500;
+}
+.input-group input:focus {
+    background: rgba(200, 230, 255, 0.22);
+    border-color: #00eaff;
+    box-shadow: 0 0 18px #00eaff inset;
+}
+.input-group input::placeholder {
+    color: rgba(200, 230, 255, 0.7);
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+.input-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00eaff;
+    font-size: 22px;
+    z-index: 3;
+    filter: drop-shadow(0 0 6px #6ec6ff);
+    transition: color 0.3s;
+}
+.register-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(90deg, #00eaff 0%, #6ec6ff 100%);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(.77,.2,.32,1.01);
+    box-shadow: 0 8px 24px rgba(0, 234, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+    letter-spacing: 1px;
+    outline: none;
+}
+.register-btn:hover {
+    transform: scale(1.04) translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0, 234, 255, 0.6);
+    background: linear-gradient(90deg, #6ec6ff 0%, #00eaff 100%);
+}
+.register-btn:active {
+    transform: scale(0.98) translateY(1px);
+    box-shadow: 0 4px 8px rgba(0, 234, 255, 0.3);
+}
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+.star {
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #eaf6ff, 0 0 24px #00eaff inset;
+    animation: twinkleReg var(--duration, 3s) infinite ease-in-out, starMoveReg 8s infinite alternate;
+    opacity: 0.8;
+    will-change: transform, opacity;
+    transition: box-shadow 0.3s;
+}
+@keyframes twinkleReg {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+@keyframes starMoveReg {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-12px) scale(1.08); }
+}
+.success-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.98);
+    color: #eaf6ff;
+    font-size: 32px;
+    text-align: center;
+    z-index: 4;
+    opacity: 0;
+    transition: opacity 1s cubic-bezier(.77,.2,.32,1.01), transform 0.7s cubic-bezier(.77,.2,.32,1.01);
+    text-shadow: 0 0 32px #00eaff, 0 0 18px #6ec6ff;
+    font-weight: bold;
+    pointer-events: none;
+    letter-spacing: 1.5px;
+}
+.success-message.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+.portal-energy {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00eaff 0%, #6ec6ff 60%, transparent 100%);
+    box-shadow: 0 0 80px 40px #00eaff, 0 0 120px 60px #6ec6ff;
+    filter: blur(2px) brightness(1.2);
+    opacity: 0.85;
+    z-index: 10;
+    animation: portalExpand 1.2s cubic-bezier(.77,.2,.32,1.01) forwards;
+}
+@keyframes portalExpand {
+    0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0.85; }
+    60% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+}
+.light-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 11;
+    background: linear-gradient(90deg, #eaf6ff, #00eaff);
+    box-shadow: 0 0 24px #00eaff;
+    opacity: 0.8;
+}
+.crystal-fragment {
+    position: absolute;
+    pointer-events: none;
+    z-index: 12;
+    backface-visibility: hidden;
+}

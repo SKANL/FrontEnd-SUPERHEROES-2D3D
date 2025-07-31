@@ -1,0 +1,26 @@
+<!-- Plantilla HTML para la batalla. Puedes importar este archivo si usas un sistema de rutas o cargarlo dinámicamente. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalla - Fighting Game</title>
+    <link rel="stylesheet" href="./ui/battle/base-style.css">
+    <link rel="stylesheet" href="./ui/battle/style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="bgCanvas"></canvas>
+        <canvas id="spriteCanvas"></canvas>
+        <div id="ui">
+            <div id="player1Health" class="health-bar">
+                <div id="player1Bar" class="health-fill"></div>
+            </div>
+            <div id="player2Health" class="health-bar">
+                <div id="player2Bar" class="health-fill"></div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./core/Game.js"></script>
+</body>
+</html>

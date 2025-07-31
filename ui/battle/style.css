@@ -1,0 +1,56 @@
+/* Estilos específicos para la batalla. Puedes mover aquí las reglas CSS que solo afectan a la batalla. */
+
+#gameContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#bgCanvas, #spriteCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    pointer-events: none;
+}
+
+#ui {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
+}
+
+.health-bar {
+    width: 300px;
+    height: 30px;
+    background-color: #333;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#player1Health {
+    margin-right: 10px;
+}
+
+#player2Health {
+    margin-left: 10px;
+}
+
+.health-fill {
+    height: 100%;
+    background: linear-gradient(to right, #ff0000, #ff6600);
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+#player2Bar {
+    background: linear-gradient(to left, #ff0000, #ff6600);
+}

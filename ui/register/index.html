@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Portal de Energía</title>
+    <!-- El CSS se inyecta dinámicamente desde el SPA -->
+</head>
+<body>
+    <div id="scene-container"></div>
+    <div class="stars" id="stars"></div>
+    <div class="register-container" id="registerContainer">
+        <h2>Crear Cuenta</h2>
+        <form id="registerForm">
+            <div class="input-group">
+                <i>👤</i>
+                <input type="text" id="username" name="username" required placeholder="Nombre de usuario">
+            </div>
+            <div class="input-group">
+                <i>📧</i>
+                <input type="email" id="email" name="email" required placeholder="Correo electrónico">
+            </div>
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" id="password" name="password" required placeholder="Contraseña">
+            </div>
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirmar contraseña">
+            </div>
+            <div class="input-group">
+                <i>⭐</i>
+                <label for="role" style="display:none;">Tipo de cuenta:</label>
+                <select id="role" name="role" required>
+                    <option value="user">Usuario</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <button type="submit" class="register-btn">Registrarse</button>
+        </form>
+        <div class="toggle-link">
+            ¿Ya tienes cuenta? <a href="#" id="showLogin">Inicia sesión aquí</a>
+        </div>
+    </div>
+    <div class="success-message" id="successMessage">
+        ¡Registro exitoso! Bienvenido a la aventura.
+    </div>
+    <script type="module" src="./register.js"></script>
+</body>
+</html>

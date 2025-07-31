@@ -1,0 +1,43 @@
+body {
+  background: #181818;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+.dashboard-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #222;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 4px 24px #000a;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.panel-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+#btnHeroes.panel-link {
+  text-decoration: none;
+}
+.panel-buttons button, .panel-link button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 16px 32px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.panel-buttons button:hover, .panel-link button:hover {
+  background: #0056b3;
+}
+#panelContent {
+  margin-top: 24px;
+}

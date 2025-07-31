@@ -1,3 +1,64 @@
+// Extraer el rol del token JWT
+// Obtiene el rol del usuario desde el JWT o, si no está, desde el endpoint /auth/me
+export async function getUserRoleFromTokenAsync() {
+    try {
+        const token = getToken();
+        if (!token) {
+            console.warn('No token found for role recovery');
+            return 'usuario';
+        }
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.role) {
+            return payload.role;
+        }
+        // Si el rol no está en el token, consulta el endpoint /auth/me
+        const res = await fetch('https://api-superheroes-production.up.railway.app/auth/me', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) {
+            console.warn('No se pudo recuperar el rol desde /auth/me:', res.status);
+            return 'usuario';
+        }
+        const data = await res.json();
+        if (data && data.role) {
+            return data.role;
+        } else {
+            console.warn('Respuesta de /auth/me sin rol:', data);
+            return 'usuario';
+        }
+    } catch (e) {
+        console.error('Error recuperando el rol:', e);
+        return 'usuario';
+    }
+}
+// Obtener el token JWT almacenado en localStorage
+export function getToken() {
+    return localStorage.getItem('token') || '';
+}
+
+// Extraer el userId del token JWT
+export function getUserIdFromToken() {
+    try {
+        const token = getToken();
+        if (!token) return null;
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.id || payload._id || payload.userId || null;
+    } catch {
+        return null;
+    }
+}
+
+// Extraer el rol del token JWT
+export function isAdmin() {
+    try {
+        const token = getToken();
+        if (!token) return false;
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role === 'admin';
+    } catch {
+        return false;
+    }
+}
 // utils.js
 // Funciones utilitarias para efectos visuales y validaciones
 

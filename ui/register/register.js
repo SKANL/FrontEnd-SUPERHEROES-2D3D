@@ -163,8 +163,9 @@ function handleRegisterSubmit(e) {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value || 'user';
     const formEl = document.getElementById('registerContainer');
-    register(username, email, password).then(result => {
+    register(username, email, password, role).then(result => {
         if (result.success) {
             // Portal animado con absorción
             createPortalEnergyAbsorb(formEl, () => {

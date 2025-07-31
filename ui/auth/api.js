@@ -2,22 +2,39 @@
 // Lógica de comunicación con la API (mock para ejemplo)
 
 
-export async function login(username, password) {
-    // Simulación de llamada a API
-    await new Promise(resolve => setTimeout(resolve, 500));
-    // Aquí puedes integrar tu API real
-    if (username === 'admin' && password === '1234') {
-        return { success: true, message: '¡Bienvenido! Has iniciado sesión correctamente.' };
+export async function login(email, password) {
+    try {
+        const res = await fetch('https://api-superheroes-production.up.railway.app/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+            localStorage.setItem('token', data.token);
+            return { success: true, message: '¡Bienvenido! Has iniciado sesión correctamente.' };
+        } else {
+            return { success: false, message: data.message || 'Usuario o contraseña incorrectos.' };
+        }
+    } catch (err) {
+        return { success: false, message: 'Error de red o servidor.' };
     }
-    return { success: false, message: 'Usuario o contraseña incorrectos.' };
 }
 
-export async function register(username, email, password) {
-    // Simulación de llamada a API
-    await new Promise(resolve => setTimeout(resolve, 700));
-    // Aquí puedes integrar tu API real
-    if (username && email && password) {
-        return { success: true, message: '¡Registro exitoso! Bienvenido a la aventura.' };
+export async function register(username, email, password, role = 'user') {
+    try {
+        const res = await fetch('https://api-superheroes-production.up.railway.app/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, role })
+        });
+        const data = await res.json();
+        if (res.ok && data.message) {
+            return { success: true, message: data.message };
+        } else {
+            return { success: false, message: data.message || 'Error en el registro. Verifica los datos.' };
+        }
+    } catch (err) {
+        return { success: false, message: 'Error de red o servidor.' };
     }
-    return { success: false, message: 'Error en el registro. Verifica los datos.' };
 }

@@ -16,13 +16,20 @@ function hideLoginForm() {
 
 function handleLoginSubmit(e) {
     e.preventDefault();
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('username').value; // El input se llama username pero es email
     const password = document.getElementById('password').value;
-    login(username, password).then(result => {
+    login(email, password).then(result => {
         if (result.success) {
             createMeteorite(() => {
                 hideLoginForm();
-                setTimeout(() => showSuccess(result.message), 1000);
+                setTimeout(() => {
+                    showSuccess(result.message);
+                    setTimeout(() => {
+                        if (window.loadDashboardView) {
+                          window.loadDashboardView();
+                        }
+                    }, 1500);
+                }, 1000);
             });
         } else {
             shakeCamera();

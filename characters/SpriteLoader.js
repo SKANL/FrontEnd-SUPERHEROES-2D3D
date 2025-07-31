@@ -76,10 +76,12 @@ export class SpriteLoader {
     }
 
     async loadImages(folder, files) {
+        // Usar rutas absolutas para Vite
         const loaded = await Promise.all(files.map(file => {
             return new Promise(resolve => {
                 const img = new Image();
-                img.src = `${folder}/${file}`;
+                // Vite sirve archivos estáticos desde la raíz
+                img.src = `/${folder}/${file}`;
                 img.onload = () => resolve(img);
                 img.onerror = () => resolve(null);
             });

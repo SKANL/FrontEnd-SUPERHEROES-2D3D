@@ -1,0 +1,286 @@
+/* Adaptación visual 100% idéntica a héroes */
+.villain-detail-card {
+  background: #222;
+  border-radius: 16px;
+  padding: 24px 5vw;
+  box-shadow: 0 4px 24px #000a;
+  color: #fff;
+  max-width: 900px;
+  margin: 32px auto;
+}
+.villain-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.villain-avatar {
+  font-size: 3.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.villain-icon {
+  font-size: 2.2em;
+}
+.villain-alias {
+  font-weight: 400;
+  color: #ffd700;
+  margin-top: 4px;
+}
+.villain-detail-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.villain-attr {
+  background: #23272e;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 1.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.villain-detail-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.villain-detail-footer button {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.villain-detail-footer button:hover, .villain-detail-footer button:focus {
+  background: #c82333;
+  box-shadow: 0 4px 16px #0005;
+}
+.villain-card {
+  background: #333;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 12px #0007;
+  transition: box-shadow 0.2s;
+}
+.villain-card:hover {
+  box-shadow: 0 6px 24px #000a;
+}
+.villain-info {
+  flex: 1;
+  font-size: 1.08em;
+  word-break: break-word;
+}
+.villain-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.villain-actions button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.villain-actions button.delete {
+  background: #dc3545;
+}
+.villain-actions button.edit {
+  background: #ffc107;
+  color: #222;
+}
+.villain-actions button:hover, .villain-actions button:focus {
+  opacity: 0.9;
+  box-shadow: 0 4px 16px #0005;
+}
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 2vw;
+}
+.hidden {
+  display: none !important;
+}
+
+body {
+  background: linear-gradient(120deg, #181818 60%, #23272e 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2.2em;
+  letter-spacing: 1px;
+}
+.container {
+  max-width: 900px;
+  width: 95vw;
+  margin: 32px auto;
+  background: #222;
+  border-radius: 16px;
+  padding: 24px 5vw;
+  box-shadow: 0 4px 24px #000a;
+  transition: box-shadow 0.2s;
+}
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.search-bar input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #333;
+  color: #fff;
+  min-width: 160px;
+  font-size: 1em;
+}
+.search-bar button {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.search-bar button:hover, .search-bar button:focus {
+  background: #218838;
+  box-shadow: 0 4px 16px #0005;
+}
+#villainsList {
+  margin-top: 24px;
+}
+.villain-card {
+  background: #333;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 12px #0007;
+  transition: box-shadow 0.2s;
+}
+.villain-card:hover {
+  box-shadow: 0 6px 24px #000a;
+}
+.villain-info {
+  flex: 1;
+  font-size: 1.08em;
+  word-break: break-word;
+}
+.villain-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.villain-actions button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-size: 1em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.villain-actions button.delete {
+  background: #dc3545;
+}
+.villain-actions button.edit {
+  background: #ffc107;
+  color: #222;
+}
+.villain-actions button:hover, .villain-actions button:focus {
+  opacity: 0.9;
+  box-shadow: 0 4px 16px #0005;
+}
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 2vw;
+}
+.hidden {
+  display: none !important;
+}
+.form-box {
+  background: #222;
+  padding: 24px 5vw;
+  border-radius: 12px;
+  min-width: 280px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 2px 12px #000a;
+}
+.form-box label {
+  display: block;
+  margin-bottom: 6px;
+}
+.form-box input, .form-box select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #333;
+  color: #fff;
+  font-size: 1em;
+}
+.form-box button {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 1em;
+  box-shadow: 0 2px 8px #0003;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.form-box button.cancel {
+  background: #dc3545;
+}
+.form-box button:hover, .form-box button:focus {
+  background: #218838;
+  box-shadow: 0 4px 16px #0005;
+}

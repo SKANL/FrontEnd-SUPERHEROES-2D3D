@@ -1,3 +1,5 @@
+import { logout } from '../auth/utils.js';
+document.getElementById('logoutBtn')?.addEventListener('click', logout);
 // heroRenderer.js
 export function renderHeroesList(heroes, { onDetail, onEdit, onDelete, isAdmin, userId }) {
   const heroesList = document.getElementById('heroesList');
@@ -40,25 +42,37 @@ export function renderHeroDetail(hero, onClose) {
   const heroDetailContainer = document.getElementById('heroDetailContainer');
   heroDetailContainer.classList.remove('hidden');
   heroDetailContainer.innerHTML = `
-    <div class='hero-detail-box'>
-      <h2>${hero.name} (${hero.alias})</h2>
-      <p><strong>Ciudad:</strong> ${hero.city}</p>
-      <p><strong>Equipo:</strong> ${hero.team}</p>
-      <p><strong>Salud:</strong> ${hero.health}</p>
-      <p><strong>Stamina:</strong> ${hero.stamina}</p>
-      <p><strong>Velocidad:</strong> ${hero.speed}</p>
-      <p><strong>Crítico:</strong> ${hero.critChance}%</p>
-      <p><strong>Estado:</strong> ${hero.status}</p>
-      <p><strong>Especial:</strong> ${hero.specialAbility}</p>
-      <p><strong>isAlive:</strong> ${hero.isAlive ? 'Sí' : 'No'}</p>
-      <p><strong>Rounds Ganados:</strong> ${hero.roundsWon}</p>
-      <p><strong>Daño:</strong> ${hero.damage}</p>
-      <p><strong>teamAffinity:</strong> ${hero.teamAffinity}</p>
-      <p><strong>energyCost:</strong> ${hero.energyCost}</p>
-      <p><strong>damageReduction:</strong> ${hero.damageReduction}</p>
-      <p><strong>attack:</strong> ${hero.attack}</p>
-      <p><strong>defense:</strong> ${hero.defense}</p>
-      <button class='cancel'>Cerrar</button>
+    <div class='hero-detail-card'>
+      <div class='hero-detail-header'>
+        <div class='hero-avatar'>
+          <span class='hero-icon'>🦸‍♂️</span>
+        </div>
+        <div>
+          <h2>${hero.name}</h2>
+          <h3 class='hero-alias'>${hero.alias}</h3>
+        </div>
+      </div>
+      <div class='hero-detail-body'>
+        <div class='hero-attr'><span>🌆 Ciudad:</span> ${hero.city}</div>
+        <div class='hero-attr'><span>🛡️ Equipo:</span> ${hero.team}</div>
+        <div class='hero-attr'><span>❤️ Salud:</span> ${hero.health}</div>
+        <div class='hero-attr'><span>⚡ Stamina:</span> ${hero.stamina}</div>
+        <div class='hero-attr'><span>🏃‍♂️ Velocidad:</span> ${hero.speed}</div>
+        <div class='hero-attr'><span>🎯 Crítico:</span> ${hero.critChance}%</div>
+        <div class='hero-attr'><span>🔄 Estado:</span> ${hero.status}</div>
+        <div class='hero-attr'><span>✨ Especial:</span> ${hero.specialAbility}</div>
+        <div class='hero-attr'><span>🟢 Vivo:</span> ${hero.isAlive ? 'Sí' : 'No'}</div>
+        <div class='hero-attr'><span>🏆 Rounds Ganados:</span> ${hero.roundsWon}</div>
+        <div class='hero-attr'><span>💥 Daño:</span> ${hero.damage}</div>
+        <div class='hero-attr'><span>🤝 Afinidad Equipo:</span> ${hero.teamAffinity}</div>
+        <div class='hero-attr'><span>🔋 Costo Energía:</span> ${hero.energyCost}</div>
+        <div class='hero-attr'><span>🛡️ Reducción Daño:</span> ${hero.damageReduction}</div>
+        <div class='hero-attr'><span>⚔️ Ataque:</span> ${hero.attack}</div>
+        <div class='hero-attr'><span>🛡️ Defensa:</span> ${hero.defense}</div>
+      </div>
+      <div class='hero-detail-footer'>
+        <button class='cancel'>Cerrar</button>
+      </div>
     </div>
   `;
   document.querySelector('#heroDetailContainer .cancel').onclick = onClose;
@@ -68,67 +82,40 @@ export function renderHeroDetail(hero, onClose) {
 export function renderHeroForm({ hero, isAdmin, isOwner, onSubmit, onCancel }) {
   const heroFormContainer = document.getElementById('heroFormContainer');
   heroFormContainer.classList.remove('hidden');
-  let formFields = `
-    <label>Nombre</label>
-    <input name="name" required value="${hero?.name || ''}">
-    <label>Alias</label>
-    <input name="alias" required value="${hero?.alias || ''}">
-    <label>Ciudad</label>
-    <input name="city" required value="${hero?.city || ''}">
-    <label>Equipo</label>
-    <input name="team" value="${hero?.team || ''}">
-    <label>Habilidad Especial</label>
-    <input name="specialAbility" value="${hero?.specialAbility || ''}">
-    <label>Salud</label>
-    <input name="health" type="number" min="0" max="100" value="${hero?.health ?? 100}">
-    <label>Stamina</label>
-    <input name="stamina" type="number" min="0" max="100" value="${hero?.stamina ?? 100}">
-    <label>Velocidad</label>
-    <input name="speed" type="number" min="0" max="100" value="${hero?.speed ?? 60}">
-    <label>Crítico (%)</label>
-    <input name="critChance" type="number" min="0" max="100" value="${hero?.critChance ?? 20}">
-  `;
-  if (isAdmin) {
-    formFields += `
-      <label>isAlive</label>
-      <select name="isAlive">
-        <option value="true" ${hero?.isAlive !== false ? 'selected' : ''}>Sí</option>
-        <option value="false" ${hero?.isAlive === false ? 'selected' : ''}>No</option>
-      </select>
-      <label>Rounds Ganados</label>
-      <input name="roundsWon" type="number" min="0" value="${hero?.roundsWon ?? 0}">
-      <label>Daño</label>
-      <input name="damage" type="number" min="0" value="${hero?.damage ?? 0}">
-      <label>Estado</label>
-      <input name="status" value="${hero?.status || 'normal'}">
-      <label>teamAffinity</label>
-      <input name="teamAffinity" type="number" min="0" value="${hero?.teamAffinity ?? 0}">
-      <label>energyCost</label>
-      <input name="energyCost" type="number" min="0" value="${hero?.energyCost ?? 20}">
-      <label>damageReduction</label>
-      <input name="damageReduction" type="number" min="0" value="${hero?.damageReduction ?? 0}">
-      <label>attack</label>
-      <input name="attack" type="number" min="0" value="${hero?.attack ?? 75}">
-      <label>defense</label>
-      <input name="defense" type="number" min="0" value="${hero?.defense ?? 45}">
-    `;
-  } else if (isOwner) {
-    formFields += `
-      <label>Equipo</label>
-      <input name="team" value="${hero?.team || ''}">
-      <label>Estado</label>
-      <input name="status" value="${hero?.status || 'normal'}">
-      <label>Stamina</label>
-      <input name="stamina" type="number" min="0" max="100" value="${hero?.stamina ?? 100}">
-    `;
-  }
   heroFormContainer.innerHTML = `
-    <div class="form-box">
-      <h2>${hero ? 'Editar' : 'Crear'} Héroe</h2>
-      <form id="heroForm">
-        ${formFields}
-        <button type="submit">${hero ? 'Guardar' : 'Crear'}</button>
-        <button type="button" class="cancel">Cancelar</button>
+    <div class='hero-detail-card'>
+      <div class='hero-detail-header'>
+        <div class='hero-avatar'>
+          <span class='hero-icon'>${hero?._id ? '✏️' : '🦸‍♂️'}</span>
+        </div>
+        <div>
+          <h2>${hero?._id ? 'Editar Héroe' : 'Crear Héroe'}</h2>
+          <h3 class='hero-alias'>${hero?.alias || ''}</h3>
+        </div>
+      </div>
+      <form id='heroForm'>
+        <div class='hero-detail-body'>
+          <div class='hero-attr'><span>🌆 Ciudad:</span> <input name='city' required value='${hero?.city || ''}'></div>
+          <div class='hero-attr'><span>🛡️ Equipo:</span> <input name='team' value='${hero?.team || ''}'></div>
+          <div class='hero-attr'><span>❤️ Salud:</span> <input name='health' type='number' min='0' max='100' value='${hero?.health ?? 100}'></div>
+          <div class='hero-attr'><span>⚡ Stamina:</span> <input name='stamina' type='number' min='0' max='100' value='${hero?.stamina ?? 100}'></div>
+          <div class='hero-attr'><span>🏃‍♂️ Velocidad:</span> <input name='speed' type='number' min='0' max='200' value='${hero?.speed ?? 60}'></div>
+          <div class='hero-attr'><span>🎯 Crítico:</span> <input name='critChance' type='number' min='0' max='100' value='${hero?.critChance ?? 20}'></div>
+          <div class='hero-attr'><span>🔄 Estado:</span> <input name='status' value='${hero?.status || 'normal'}'></div>
+          <div class='hero-attr'><span>✨ Especial:</span> <input name='specialAbility' value='${hero?.specialAbility || ''}'></div>
+          <div class='hero-attr'><span>🟢 Vivo:</span> <select name='isAlive'><option value='true' ${hero?.isAlive !== false ? 'selected' : ''}>Sí</option><option value='false' ${hero?.isAlive === false ? 'selected' : ''}>No</option></select></div>
+          <div class='hero-attr'><span>🏆 Rounds Ganados:</span> <input name='roundsWon' type='number' min='0' value='${hero?.roundsWon ?? 0}'></div>
+          <div class='hero-attr'><span>💥 Daño:</span> <input name='damage' type='number' min='0' value='${hero?.damage ?? 0}'></div>
+          <div class='hero-attr'><span>🤝 Afinidad Equipo:</span> <input name='teamAffinity' type='number' min='0' value='${hero?.teamAffinity ?? 0}'></div>
+          <div class='hero-attr'><span>🔋 Costo Energía:</span> <input name='energyCost' type='number' min='0' value='${hero?.energyCost ?? 20}'></div>
+          <div class='hero-attr'><span>🛡️ Reducción Daño:</span> <input name='damageReduction' type='number' min='0' value='${hero?.damageReduction ?? 0}'></div>
+          <div class='hero-attr'><span>⚔️ Ataque:</span> <input name='attack' type='number' min='0' value='${hero?.attack ?? 75}'></div>
+          <div class='hero-attr'><span>🛡️ Defensa:</span> <input name='defense' type='number' min='0' value='${hero?.defense ?? 45}'></div>
+        </div>
+        <div class='hero-detail-footer'>
+          <button type='submit' class='save'>${hero?._id ? 'Guardar Cambios' : 'Crear Héroe'}</button>
+          <button type='button' class='cancel'>Cancelar</button>
+        </div>
       </form>
     </div>
   `;
@@ -141,23 +128,14 @@ export function renderHeroForm({ hero, isAdmin, isOwner, onSubmit, onCancel }) {
     data.stamina = Number(data.stamina);
     data.speed = Number(data.speed);
     data.critChance = Number(data.critChance);
-    if (isAdmin) {
-      data.isAlive = data.isAlive === 'true';
-      data.roundsWon = Number(data.roundsWon);
-      data.damage = Number(data.damage);
-      data.teamAffinity = Number(data.teamAffinity);
-      data.energyCost = Number(data.energyCost);
-      data.damageReduction = Number(data.damageReduction);
-      data.attack = Number(data.attack);
-      data.defense = Number(data.defense);
-    } else if (isOwner) {
-      // Solo campos permitidos para usuario
-      data = {
-        team: data.team,
-        status: data.status,
-        stamina: Number(data.stamina)
-      };
-    }
+    data.isAlive = data.isAlive === 'true';
+    data.roundsWon = Number(data.roundsWon);
+    data.damage = Number(data.damage);
+    data.teamAffinity = Number(data.teamAffinity);
+    data.energyCost = Number(data.energyCost);
+    data.damageReduction = Number(data.damageReduction);
+    data.attack = Number(data.attack);
+    data.defense = Number(data.defense);
     onSubmit(data);
   };
   document.querySelector('.cancel').onclick = onCancel;

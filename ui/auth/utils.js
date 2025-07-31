@@ -1,3 +1,51 @@
+// Mostrar mensaje de error en pantalla
+export function showError(message) {
+    let errorDiv = document.getElementById('errorMessage');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'errorMessage';
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '20px';
+        errorDiv.style.right = '20px';
+        errorDiv.style.background = '#ff5252';
+        errorDiv.style.color = '#fff';
+        errorDiv.style.padding = '0.7rem 1.5rem';
+        errorDiv.style.borderRadius = '8px';
+        errorDiv.style.zIndex = '9999';
+        errorDiv.style.fontWeight = 'bold';
+        document.body.appendChild(errorDiv);
+    }
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => { errorDiv.style.display = 'none'; }, 3500);
+}
+
+// Mostrar mensaje de éxito en pantalla
+export function showSuccess(message) {
+    let successDiv = document.getElementById('successMessage');
+    if (!successDiv) {
+        successDiv = document.createElement('div');
+        successDiv.id = 'successMessage';
+        successDiv.style.position = 'fixed';
+        successDiv.style.top = '20px';
+        successDiv.style.right = '20px';
+        successDiv.style.background = '#ffb300';
+        successDiv.style.color = '#23283b';
+        successDiv.style.padding = '0.7rem 1.5rem';
+        successDiv.style.borderRadius = '8px';
+        successDiv.style.zIndex = '9999';
+        successDiv.style.fontWeight = 'bold';
+        document.body.appendChild(successDiv);
+    }
+    successDiv.textContent = message;
+    successDiv.style.display = 'block';
+    setTimeout(() => { successDiv.style.display = 'none'; }, 3500);
+}
+// Cerrar sesión: elimina el token y redirige al login
+export function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '../auth/index.html';
+}
 // Extraer el rol del token JWT
 // Obtiene el rol del usuario desde el JWT o, si no está, desde el endpoint /auth/me
 export async function getUserRoleFromTokenAsync() {

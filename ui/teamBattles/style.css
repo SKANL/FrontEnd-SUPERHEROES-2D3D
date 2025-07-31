@@ -1,0 +1,79 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #181c24;
+  color: #f5f5f5;
+  margin: 0;
+}
+#teamBattles-app {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #23283b;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px #0006;
+  padding: 2rem;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+header h1 {
+  font-size: 2rem;
+  color: #ffb300;
+}
+header button {
+  background: #ff5252;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+section {
+  margin-bottom: 2rem;
+}
+form label {
+  display: block;
+  margin-bottom: 1rem;
+}
+select {
+  min-width: 200px;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2c3146;
+  color: #fff;
+}
+button[type="submit"] {
+  background: #ffb300;
+  color: #23283b;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#teamBattlesList li {
+  margin-bottom: 0.7rem;
+  background: #2c3146;
+  padding: 0.7rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#battle-details-section {
+  background: #2c3146;
+  border-radius: 6px;
+  padding: 1rem;
+}
+#battleActions button {
+  margin: 0.3rem 0.5rem 0.3rem 0;
+  background: #ffb300;
+  color: #23283b;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

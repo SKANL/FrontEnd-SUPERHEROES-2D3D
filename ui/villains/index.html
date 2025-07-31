@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Villanos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Gestor de Villanos</h1>
+    <div class="search-bar">
+      <input type="text" id="searchVillainCity" placeholder="Buscar por ciudad">
+      <button id="btnSearchVillainCity">Buscar ciudad</button>
+      <input type="text" id="searchVillainId" placeholder="Buscar por ID">
+      <button id="btnSearchVillainId">Buscar ID</button>
+      <button id="showCreateVillainForm">Crear Villano</button>
+    </div>
+    <div id="villainsList"></div>
+    <div id="villainFormContainer" class="modal hidden"></div>
+  <button id="logoutBtn" style="position:absolute;top:20px;right:20px;background:#ff5252;color:#fff;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;z-index:1000;">Cerrar sesión</button>
+  </div>
+  <script type="module" src="manager.js"></script>
+</body>
+</html>

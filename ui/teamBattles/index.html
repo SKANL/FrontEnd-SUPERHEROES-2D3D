@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batallas por Equipos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="teamBattles-app">
+    <header>
+      <h1>Batallas por Equipos</h1>
+      <button id="logoutBtn">Cerrar sesión</button>
+    </header>
+    <section id="create-battle-section">
+      <h2>Crear nueva batalla por equipos</h2>
+      <form id="createTeamBattleForm">
+        <label>Modo:
+          <select id="battleMode">
+            <option value="manual">Manual</option>
+            <option value="auto">Automático</option>
+          </select>
+        </label>
+        <label>Héroes:
+          <select id="heroSelect" multiple></select>
+        </label>
+        <label>Villanos:
+          <select id="villainSelect" multiple></select>
+        </label>
+        <button type="submit">Crear Batalla</button>
+      </form>
+    </section>
+    <section id="battles-list-section">
+      <h2>Mis batallas por equipos</h2>
+      <ul id="teamBattlesList"></ul>
+    </section>
+    <section id="battle-details-section" style="display:none;">
+      <h2>Detalles de la batalla</h2>
+      <div id="battleDetails"></div>
+      <div id="battleActions"></div>
+    </section>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -9,18 +9,19 @@
   NPM_FLAGS = "--legacy-peer-deps"
   NODE_OPTIONS = "--max-old-space-size=4096"
 
-# Headers globales
+# CRÍTICO: Headers para HTML PRIMERO (orden importa)
 [[headers]]
-  for = "/*"
+  for = "/ui/auth/index.html"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+    Content-Type = "text/html; charset=utf-8"
+    Cache-Control = "public, max-age=0"
 
-# CRÍTICO: Headers para HTML
+[[headers]]
+  for = "/ui/*/index.html"
+  [headers.values]
+    Content-Type = "text/html; charset=utf-8"
+    Cache-Control = "public, max-age=0"
+
 [[headers]]
   for = "*.html"
   [headers.values]

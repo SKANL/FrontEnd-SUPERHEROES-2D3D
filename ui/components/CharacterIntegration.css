@@ -1,0 +1,191 @@
+/* Estilos específicos para integración del selector de personajes */
+
+/* Contenedor principal de selección de personajes */
+.character-selection-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Header de selección */
+.selection-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.selection-header h2 {
+  color: #ffffff;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.selection-header p {
+  color: #a0a0a0;
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+/* Botón de modo tradicional */
+.traditional-mode-btn {
+  background: linear-gradient(145deg, #444, #222);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  margin-top: 15px;
+}
+
+.traditional-mode-btn:hover {
+  background: linear-gradient(145deg, #555, #333);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón para volver al selector de personajes */
+.character-select-btn {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.character-select-btn:hover {
+  background: linear-gradient(145deg, #5CBF60, #4CAF50);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+/* Información del personaje del juego en las tarjetas */
+.game-character-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.game-character-badge {
+  background: linear-gradient(145deg, #FF6B6B, #FF5252);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.character-type-badge {
+  background: linear-gradient(145deg, #4ECDC4, #26A69A);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Sección de información del personaje del juego en detalles */
+.game-character-section {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid #4ECDC4;
+}
+
+.game-character-section h4 {
+  color: #4ECDC4;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Estilos responsivos para el selector */
+@media (max-width: 768px) {
+  .character-selection-container {
+    padding: 15px;
+    min-height: auto;
+  }
+  
+  .selection-header h2 {
+    font-size: 2em;
+  }
+  
+  .selection-header p {
+    font-size: 1em;
+  }
+  
+  .traditional-mode-btn,
+  .character-select-btn {
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  .game-character-info {
+    flex-direction: column;
+  }
+  
+  .game-character-badge,
+  .character-type-badge {
+    text-align: center;
+  }
+}
+
+/* Animaciones para mejorar la experiencia */
+.character-selection-container {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efectos hover para las tarjetas con personajes del juego */
+.hero-card:has(.game-character-info),
+.villain-card:has(.game-character-info) {
+  border-left: 4px solid #4ECDC4;
+  background: linear-gradient(135deg, 
+    rgba(78, 205, 196, 0.1) 0%, 
+    rgba(255, 107, 107, 0.05) 100%
+  );
+}
+
+.hero-card:has(.game-character-info):hover,
+.villain-card:has(.game-character-info):hover {
+  box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Indicadores visuales especiales para personajes del juego */
+.hero-card .game-character-badge::before,
+.villain-card .game-character-badge::before {
+  content: "🎮";
+  margin-right: 5px;
+}
+
+.character-type-badge::before {
+  content: "🎭";
+  margin-right: 5px;
+}

@@ -2,8 +2,8 @@ import { logout } from '../auth/utils.js';
 document.getElementById('logoutBtn')?.addEventListener('click', logout);
 // Gestor de héroes: listar, crear, editar, eliminar
 
-import * as heroApi from './heroApi.js';
-import * as heroRenderer from './heroRenderer.js';
+import * as heroApi from './heroApi_dev.js';
+import * as heroRenderer from './heroRenderer_new.js';
 import { getUserIdFromToken, getUserRoleFromTokenAsync } from '../auth/utils.js';
 
 const showCreateFormBtn = document.getElementById('showCreateForm');
@@ -110,12 +110,9 @@ btnSearchId.onclick = () => {
 };
 
 getUserRoleFromTokenAsync().then(role => {
-  if (role === 'admin') {
-    showCreateFormBtn.style.display = '';
-    showCreateFormBtn.onclick = () => showHeroForm();
-  } else {
-    showCreateFormBtn.style.display = 'none';
-  }
+  // Tanto usuarios como admins pueden crear héroes
+  showCreateFormBtn.style.display = '';
+  showCreateFormBtn.onclick = () => showHeroForm();
 });
 
 loadHeroes();

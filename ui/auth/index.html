@@ -11,16 +11,27 @@
 
     <div class="stars" id="stars"></div>
 
+    <!-- Panel de credenciales de prueba -->
+    <div style="position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 10px; font-size: 12px; z-index: 1000;">
+        <h4 style="margin: 0 0 10px 0; color: #4CAF50;">🔑 Credenciales de Prueba</h4>
+        <div><strong>Demo:</strong> demo@demo.com / demo</div>
+        <div><strong>Usuario:</strong> user@superheroes.com / user123</div>
+        <div><strong>Admin:</strong> admin@superheroes.com / admin123</div>
+        <div style="margin-top: 8px; font-size: 10px; opacity: 0.7;">
+            💡 Modo desarrollo activo - Funciona sin API
+        </div>
+    </div>
+
     <div class="login-container" id="loginContainer">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
             <div class="input-group">
                 <i>👤</i>
-                <input type="email" id="username" placeholder="Correo electrónico">
+                <input type="email" id="username" placeholder="Correo electrónico" value="demo@demo.com">
             </div>
             <div class="input-group">
                 <i>🔒</i>
-                <input type="password" id="password" placeholder="Contraseña">
+                <input type="password" id="password" placeholder="Contraseña" value="demo">
             </div>
             <button type="submit" class="login-btn">Ingresar</button>
         </form>

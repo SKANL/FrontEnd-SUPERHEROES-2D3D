@@ -2,8 +2,8 @@ import { logout } from '../auth/utils.js';
 document.getElementById('logoutBtn')?.addEventListener('click', logout);
 // Gestor de villanos: listar, crear, editar, eliminar
 
-import * as villainApi from './villainApi.js';
-import * as villainRenderer from './villainRenderer.js';
+import * as villainApi from './villainApi_dev.js';
+import * as villainRenderer from './villainRenderer_new.js';
 import { getUserIdFromToken, getUserRoleFromTokenAsync } from '../auth/utils.js';
 
 const showCreateFormBtn = document.getElementById('showCreateVillainForm');
@@ -116,12 +116,9 @@ btnSearchId.onclick = async () => {
 
 
 getUserRoleFromTokenAsync().then(role => {
-  if (role === 'admin') {
-    showCreateFormBtn.style.display = '';
-    showCreateFormBtn.onclick = () => showVillainForm();
-  } else {
-    showCreateFormBtn.style.display = 'none';
-  }
+  // Tanto usuarios como admins pueden crear villanos
+  showCreateFormBtn.style.display = '';
+  showCreateFormBtn.onclick = () => showVillainForm();
 });
 
 window.addEventListener('DOMContentLoaded', loadVillains);

@@ -44,8 +44,28 @@ export function showSuccess(message) {
 // Cerrar sesión: elimina el token y redirige al login
 export function logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Redirigir siempre al login principal
     window.location.href = '../auth/index.html';
 }
+
+// Verificar si es token de desarrollo
+function isDevelopmentToken(token) {
+    return token && token.startsWith('dev-token-');
+}
+
+// Decodificar token de desarrollo
+function decodeDevelopmentToken(token) {
+    try {
+        const payload = token.replace('dev-token-', '');
+        return JSON.parse(atob(payload));
+    } catch (error) {
+        console.error('Error decodificando token de desarrollo:', error);
+        return null;
+    }
+}
+
 // Extraer el rol del token JWT
 // Obtiene el rol del usuario desde el JWT o, si no está, desde el endpoint /auth/me
 export async function getUserRoleFromTokenAsync() {
@@ -53,30 +73,44 @@ export async function getUserRoleFromTokenAsync() {
         const token = getToken();
         if (!token) {
             console.warn('No token found for role recovery');
-            return 'usuario';
+            return 'user';
         }
+
+        // Verificar si es token de desarrollo
+        if (isDevelopmentToken(token)) {
+            const payload = decodeDevelopmentToken(token);
+            return payload ? payload.role : 'user';
+        }
+
+        // Token JWT normal
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (payload.role) {
             return payload.role;
         }
+
         // Si el rol no está en el token, consulta el endpoint /auth/me
-        const res = await fetch('https://api-superheroes-production.up.railway.app/auth/me', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-        if (!res.ok) {
-            console.warn('No se pudo recuperar el rol desde /auth/me:', res.status);
-            return 'usuario';
-        }
-        const data = await res.json();
-        if (data && data.role) {
-            return data.role;
-        } else {
-            console.warn('Respuesta de /auth/me sin rol:', data);
-            return 'usuario';
+        try {
+            const res = await fetch('https://api-superheroes-production.up.railway.app/auth/me', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (!res.ok) {
+                console.warn('No se pudo recuperar el rol desde /auth/me:', res.status);
+                return 'user';
+            }
+            const data = await res.json();
+            if (data && data.role) {
+                return data.role;
+            } else {
+                console.warn('Respuesta de /auth/me sin rol:', data);
+                return 'user';
+            }
+        } catch (apiError) {
+            console.warn('Error consultando /auth/me:', apiError);
+            return 'user';
         }
     } catch (e) {
         console.error('Error recuperando el rol:', e);
-        return 'usuario';
+        return 'user';
     }
 }
 // Obtener el token JWT almacenado en localStorage
@@ -89,6 +123,14 @@ export function getUserIdFromToken() {
     try {
         const token = getToken();
         if (!token) return null;
+
+        // Verificar si es token de desarrollo
+        if (isDevelopmentToken(token)) {
+            const payload = decodeDevelopmentToken(token);
+            return payload ? payload.id : null;
+        }
+
+        // Token JWT normal
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.id || payload._id || payload.userId || null;
     } catch {
@@ -101,6 +143,14 @@ export function isAdmin() {
     try {
         const token = getToken();
         if (!token) return false;
+
+        // Verificar si es token de desarrollo
+        if (isDevelopmentToken(token)) {
+            const payload = decodeDevelopmentToken(token);
+            return payload ? payload.role === 'admin' : false;
+        }
+
+        // Token JWT normal
         const payload = JSON.parse(atob(token.split('.')[1]));
         return payload.role === 'admin';
     } catch {

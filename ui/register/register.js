@@ -163,8 +163,31 @@ function handleRegisterSubmit(e) {
     const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
     const role = document.getElementById('role').value || 'user';
     const formEl = document.getElementById('registerContainer');
+    
+    // Validación de confirmación de contraseña
+    if (password !== confirmPassword) {
+        shakeCamera();
+        alert('Las contraseñas no coinciden. Por favor, verifica que ambas contraseñas sean iguales.');
+        return;
+    }
+    
+    // Validación básica
+    if (!username || !email || !password) {
+        shakeCamera();
+        alert('Por favor, completa todos los campos requeridos.');
+        return;
+    }
+    
+    // Validación de contraseña mínima
+    if (password.length < 4) {
+        shakeCamera();
+        alert('La contraseña debe tener al menos 4 caracteres.');
+        return;
+    }
+    
     register(username, email, password, role).then(result => {
         if (result.success) {
             // Portal animado con absorción
@@ -175,12 +198,22 @@ function handleRegisterSubmit(e) {
                 createLightParticlesSpiral(x, y);
                 createCrystalFragmentsUp(x, y);
                 hideRegisterForm();
-                setTimeout(() => showSuccess(result.message), 900);
+                setTimeout(() => {
+                    showSuccess(result.message);
+                    // Redirigir al login después del registro exitoso
+                    setTimeout(() => {
+                        window.location.href = '../auth/index.html';
+                    }, 2000);
+                }, 900);
             });
         } else {
             shakeCamera();
             alert(result.message);
         }
+    }).catch(error => {
+        console.error('[Register] Error:', error);
+        shakeCamera();
+        alert('Error inesperado. Por favor, intenta nuevamente.');
     });
 }
 
@@ -188,6 +221,15 @@ export function initRegister() {
     createStars();
     const registerForm = document.getElementById('registerForm');
     registerForm.addEventListener('submit', handleRegisterSubmit);
+    
+    // Agregar navegación al login
+    const showLoginLink = document.getElementById('showLogin');
+    if (showLoginLink) {
+        showLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '../auth/index.html';
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initRegister);

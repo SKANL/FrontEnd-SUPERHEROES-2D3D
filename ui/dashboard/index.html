@@ -5,17 +5,162 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Control</title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    // Verificar autenticación antes de cargar la página
+    const authToken = localStorage.getItem('token');
+    if (!authToken) {
+      console.log('[Auth Guard] No hay token, redirigiendo al login...');
+      window.location.href = '../auth/index.html';
+    }
+  </script>
+  <style>
+    .status-panel {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      color: white;
+    }
+    
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .status-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .status-item.error {
+      border-left-color: #f44336;
+    }
+    
+    .status-item.warning {
+      border-left-color: #ff9800;
+    }
+    
+    .status-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .status-value {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .welcome-panel {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .panel-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .panel-link button {
+      width: 100%;
+      min-height: 100px;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .panel-link button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .button-icon {
+      font-size: 2rem;
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-container">
-    <h1>Panel de Control</h1>
-    <div class="panel-buttons">
-      <a href="../heroes/index.html" id="btnHeroes" class="panel-link"><button>Gestor de Héroes</button></a>
-      <a href="../villains/index.html" id="btnVillains" class="panel-link"><button>Gestor de Villanos</button></a>
-      <a href="../teamBattles/index.html" id="btnTeamBattles" class="panel-link"><button>Batallas por Equipos</button></a>
+    <div class="welcome-panel">
+      <h1>🎮 Superheroes Game Dashboard</h1>
+      <p>Bienvenido al panel de control. Gestiona tus héroes, villanos y batallas épicas.</p>
     </div>
+    
+    <div class="status-panel">
+      <h2>📊 Estado del Sistema</h2>
+      <div class="status-grid" id="statusGrid">
+        <div class="status-item">
+          <div class="status-label">🔗 Conexión API</div>
+          <div class="status-value" id="apiStatus">Verificando...</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">🎯 Selector de Personajes</div>
+          <div class="status-value" id="characterStatus">Verificando...</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">👤 Usuario Activo</div>
+          <div class="status-value" id="userStatus">Verificando...</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">⚙️ Módulos del Juego</div>
+          <div class="status-value" id="moduleStatus">Verificando...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="panel-buttons">
+      <a href="../heroes/index.html" id="btnHeroes" class="panel-link">
+        <button>
+          <div class="button-icon">🦸‍♂️</div>
+          <div>Gestor de Héroes</div>
+        </button>
+      </a>
+      <a href="../villains/index.html" id="btnVillains" class="panel-link">
+        <button>
+          <div class="button-icon">🦹‍♂️</div>
+          <div>Gestor de Villanos</div>
+        </button>
+      </a>
+      <a href="../teamBattles/index.html" id="btnTeamBattles" class="panel-link">
+        <button>
+          <div class="button-icon">⚔️</div>
+          <div>Batallas por Equipos</div>
+        </button>
+      </a>
+    </div>
+    
     <div id="panelContent"></div>
   </div>
-  <script type="module" src="dashboard.js"></script>
+  <script type="module" src="dashboard_new.js"></script>
+  <script type="module">
+    // Verificar autenticación al cargar la página
+    import { getToken } from '../auth/utils.js';
+    
+    const token = getToken();
+    if (!token) {
+      alert('Sesión expirada. Redirigiendo al login...');
+      window.location.href = '../auth/index.html';
+    }
+  </script>
 </body>
 </html>

@@ -16,7 +16,7 @@ function hideLoginForm() {
 
 function handleLoginSubmit(e) {
     e.preventDefault();
-    const email = document.getElementById('username').value; // El input se llama username pero es email
+    const email = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     login(email, password).then(result => {
         if (result.success) {
@@ -25,9 +25,8 @@ function handleLoginSubmit(e) {
                 setTimeout(() => {
                     showSuccess(result.message);
                     setTimeout(() => {
-                        if (window.loadDashboardView) {
-                          window.loadDashboardView();
-                        }
+                        // Redirigir al dashboard después del login exitoso
+                        window.location.href = '../dashboard/index.html';
                     }, 1500);
                 }, 1000);
             });
@@ -42,6 +41,15 @@ export function initLogin() {
     createStars();
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', handleLoginSubmit);
+    
+    // Agregar navegación al registro
+    const showRegisterLink = document.getElementById('showRegister');
+    if (showRegisterLink) {
+        showRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '../register/index.html';
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initLogin);

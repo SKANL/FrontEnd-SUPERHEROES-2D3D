@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestor de Héroes</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../components/CharacterSelector.css">
+  <link rel="stylesheet" href="../components/CharacterIntegration.css">
+  <script>
+    // Verificar autenticación antes de cargar la página
+    const authToken = localStorage.getItem('token');
+    if (!authToken) {
+      console.log('[Auth Guard] No hay token, redirigiendo al login...');
+      window.location.href = '../auth/index.html';
+    }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -22,5 +32,15 @@
     <button id="logoutBtn" style="position:absolute;top:20px;right:20px;background:#ff5252;color:#fff;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;z-index:1000;">Cerrar sesión</button>
   </div>
   <script type="module" src="manager.js"></script>
+  <script type="module">
+    // Verificar autenticación al cargar la página
+    import { getToken } from '../auth/utils.js';
+    
+    const token = getToken();
+    if (!token) {
+      alert('Sesión expirada. Redirigiendo al login...');
+      window.location.href = '../auth/index.html';
+    }
+  </script>
 </body>
 </html>

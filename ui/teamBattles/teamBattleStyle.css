@@ -1,0 +1,120 @@
+/* Estilos específicos para la batalla de equipos */
+#teamBattleControls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 100;
+    font-family: Arial, sans-serif;
+}
+
+#teamBattleControls h3 {
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-size: 16px;
+}
+
+#battleInfo {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+#exitBattle {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#exitBattle:hover {
+    background-color: #c9302c;
+}
+
+#controlsInfo {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 100;
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+}
+
+#controlsInfo h4 {
+    margin: 0 0 5px 0;
+    text-align: center;
+}
+
+#controlsInfo p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#hideControls {
+    background-color: #5bc0de;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+    width: 100%;
+}
+
+#hideControls:hover {
+    background-color: #46b8da;
+}
+
+.battle-result {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 1000;
+    min-width: 300px;
+}
+
+.battle-result h2 {
+    color: #ffd700;
+    margin-top: 0;
+}
+
+.battle-result button {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.battle-result button:hover {
+    background-color: #4cae4c;
+}
+
+/* Animación para cuando se recibe daño */
+@keyframes damagePulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.damage-animation {
+    animation: damagePulse 0.3s;
+}

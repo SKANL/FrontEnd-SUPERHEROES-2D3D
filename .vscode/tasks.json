@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Vite Dev Server",
+			"type": "shell",
+			"command": "npx vite",
+			"args": [
+				"--config",
+				"vite.config.js"
+			],
+			"isBackground": true,
+			"group": "run",
+			"problemMatcher": [
+				"$tsc"
+			]
+		}
+	]
+}

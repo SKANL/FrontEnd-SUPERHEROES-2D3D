@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalla de Equipos - Fighting Game</title>
+    <!-- Asegurar que los estilos se cargan correctamente -->
+    <link rel="stylesheet" href="../battle/base-style.css">
+    <link rel="stylesheet" href="../battle/style.css">
+    <link rel="stylesheet" href="teamBattleStyle.css">
+    <!-- Agregar estilos críticos inline para evitar FOUC -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #loadingScreen h2 {
+            margin-bottom: 20px;
+        }
+        #loadingSpinner {
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid #fff;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de carga inicial -->
+    <div id="loadingScreen">
+        <h2>Cargando Batalla</h2>
+        <div id="loadingSpinner"></div>
+        <p id="loadingMessage">Inicializando juego...</p>
+    </div>
+    
+    <div id="gameContainer">
+        <canvas id="bgCanvas"></canvas>
+        <canvas id="spriteCanvas"></canvas>
+        <div id="ui"></div>
+        
+        <!-- Botones de control para la batalla de equipo -->
+        <div id="teamBattleControls">
+            <h3>Batalla de Equipos</h3>
+            <div id="battleInfo"></div>
+            <button id="exitBattle">Salir de la Batalla</button>
+        </div>
+        
+        <!-- Instrucciones de control -->
+        <div id="controlsInfo">
+            <h4>Controles</h4>
+            <p>Para atacar, usa: F (Puñetazo), G (Patada), E/R/T/Q (Especiales)</p>
+            <p>Para moverte: A (Izquierda), D (Derecha), W (Saltar), S (Defender)</p>
+            <button id="hideControls">Ocultar</button>
+        </div>
+    </div>
+    
+    <script>
+        // Código para mostrar mensajes en la pantalla de carga
+        function updateLoadingMessage(message) {
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.textContent = message;
+            }
+        }
+        
+        // Función para ocultar la pantalla de carga inicial
+        window.hideInitialLoadingScreen = function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        };
+        
+        window.addEventListener('error', function(e) {
+            console.error('Error en la página:', e.error);
+            updateLoadingMessage('Error: ' + (e.error?.message || 'Error desconocido'));
+        });
+        
+        // Ocultar automáticamente después de un tiempo si no se hace manualmente
+        setTimeout(() => {
+            window.hideInitialLoadingScreen();
+        }, 10000);
+    </script>
+    <script type="module" src="teamBattleGame.js"></script>
+</body>
+</html>

@@ -137,17 +137,40 @@ export class SpriteLoader {
     }
 
     async loadImages(folder, files) {
+        console.log(`Cargando ${files.length} imágenes de ${folder}`);
+        
         // Usar rutas absolutas para Vite
-        const loaded = await Promise.all(files.map(file => {
+        const loaded = await Promise.all(files.map((file, index) => {
             return new Promise(resolve => {
                 const img = new Image();
-                // Vite sirve archivos estáticos desde la raíz
-                img.src = `/${folder}/${file}`;
-                img.onload = () => resolve(img);
-                img.onerror = () => resolve(null);
+                // Construir ruta correcta para Vite
+                const imagePath = file.startsWith('/') ? file : `/${file}`;
+                img.src = imagePath;
+                
+                img.onload = () => {
+                    console.log(`✓ Imagen cargada: ${imagePath}`);
+                    resolve(img);
+                };
+                
+                img.onerror = () => {
+                    console.warn(`✗ Error cargando imagen: ${imagePath}`);
+                    resolve(null);
+                };
+                
+                // Timeout para evitar bloqueos
+                setTimeout(() => {
+                    if (!img.complete) {
+                        console.warn(`⏰ Timeout cargando imagen: ${imagePath}`);
+                        resolve(null);
+                    }
+                }, 5000);
             });
         }));
+        
         // Filtra imágenes rotas
-        return loaded.filter(img => img && img.complete && img.naturalWidth > 0);
+        const validImages = loaded.filter(img => img && img.complete && img.naturalWidth > 0);
+        console.log(`${validImages.length}/${files.length} imágenes cargadas exitosamente para ${folder}`);
+        
+        return validImages;
     }
 }

@@ -1,8 +1,8 @@
 {
-  "type": "module",
   "scripts": {
     "dev": "npm run sync && vite --host 127.0.0.1 --port 5500",
     "build": "npm run sync && vite build",
+    "build:manual": "npm run sync && node scripts/manualBuild.js",
     "preview": "vite preview",
     "sync": "node scripts/syncToPublic.js",
     "generate-manifest": "node scripts/generateSpriteManifest.js"
@@ -11,6 +11,9 @@
     "three": "^0.178.0"
   },
   "devDependencies": {
-    "vite": "^7.0.6"
+    "vite": "^5.4.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

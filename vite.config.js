@@ -1,4 +1,4 @@
-// Vite config básico para proyecto ES Modules
+// Vite config para proyecto ES Modules con compatibilidad Node.js
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -8,7 +8,14 @@ export default defineConfig({
     open: true
   },
   build: {
-    outDir: 'dist'
+    outDir: 'dist',
+    target: 'es2015',
+    rollupOptions: {
+      external: []
+    }
   },
-  publicDir: 'public'
+  publicDir: 'public',
+  define: {
+    global: 'globalThis'
+  }
 });

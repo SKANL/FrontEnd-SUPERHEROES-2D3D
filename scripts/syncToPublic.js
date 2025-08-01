@@ -3,8 +3,8 @@
  * Mantiene src/ como fuente de desarrollo y public/ para build
  */
 
-import { copyFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+const { copyFileSync, mkdirSync, readdirSync, statSync, existsSync } = require('fs');
+const { join, dirname } = require('path');
 
 const srcDir = './src';
 const publicDir = './public';

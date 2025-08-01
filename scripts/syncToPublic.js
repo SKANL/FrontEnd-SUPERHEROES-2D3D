@@ -54,7 +54,7 @@ function syncToPublic() {
     }
     
     // Copiar otros archivos necesarios
-    const otherFiles = ['style.css', 'main.js', 'spriteManifest.json'];
+    const otherFiles = ['style.css', 'main.js', 'spriteManifest.json', 'CRITICAL-JSON-TEST.html'];
     for (const file of otherFiles) {
       if (existsSync(file)) {
         copyFileSync(file, join(publicDir, file));

@@ -1,0 +1,55 @@
+# Configuración adicional para Netlify - Solución de MIME types
+# Este archivo debe estar en la raíz para deployment
+
+# Force correct MIME types
+[[headers]]
+  for = "/spriteManifest.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/characters/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/core/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/ui/**/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/render/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/input/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000"
+
+# Redirects para SPA
+[[redirects]]
+  from = "/ui/teamBattles/*"
+  to = "/ui/teamBattles/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/ui/heroes/*"
+  to = "/ui/heroes/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/ui/villains/*"
+  to = "/ui/villains/index.html"
+  status = 200

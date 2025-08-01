@@ -3,11 +3,15 @@
  * Mantiene src/ como fuente de desarrollo y public/ para build
  */
 
-const { copyFileSync, mkdirSync, readdirSync, statSync, existsSync } = require('fs');
-const { join, dirname } = require('path');
+import { copyFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const srcDir = './src';
-const publicDir = './public';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const srcDir = join(__dirname, '..', 'src');
+const publicDir = join(__dirname, '..', 'public');
 
 function copyDirectory(src, dest) {
   // Crear directorio destino si no existe

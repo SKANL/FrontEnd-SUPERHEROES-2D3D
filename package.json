@@ -1,8 +1,10 @@
 {
+  "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 5500",
-    "build": "vite build", 
+    "dev": "npm run sync && vite --host 127.0.0.1 --port 5500",
+    "build": "npm run sync && vite build",
     "preview": "vite preview",
+    "sync": "node scripts/syncToPublic.js",
     "generate-manifest": "node scripts/generateSpriteManifest.js"
   },
   "dependencies": {

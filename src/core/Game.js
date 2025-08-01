@@ -28,7 +28,8 @@ export class Game {
         const loader = new SpriteLoader();
 
         // Debug: Mostrar personajes disponibles en el manifiesto
-        console.log("Personajes disponibles en manifest:", Object.keys(await import('../spriteManifest.json')));
+        const manifest = await loader.loadManifest();
+        console.log("Personajes disponibles en manifest:", Object.keys(manifest));
         
         // Cargar sprites de personajes usando nueva carga dinámica
         console.log("Cargando sprites de Baraka...");

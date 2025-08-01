@@ -1,6 +1,64 @@
-import manifest from '../spriteManifest.json';
 // Carga de sprites para luchadores
 export class SpriteLoader {
+    constructor() {
+        this.manifest = null;
+    }
+
+    async loadManifest() {
+        if (!this.manifest) {
+            try {
+                // Intentar múltiples rutas para el manifest
+                const possiblePaths = [
+                    '/spriteManifest.json',           // Ruta absoluta desde la raíz
+                    './spriteManifest.json',          // Ruta relativa actual
+                    '../spriteManifest.json',         // Un nivel arriba
+                    '../../spriteManifest.json',      // Dos niveles arriba (para ui/teamBattles/)
+                    '../../../spriteManifest.json'    // Tres niveles arriba
+                ];
+                
+                let response = null;
+                let successPath = null;
+                
+                for (const path of possiblePaths) {
+                    try {
+                        console.log(`Intentando cargar manifest desde: ${path}`);
+                        response = await fetch(path);
+                        if (response.ok) {
+                            successPath = path;
+                            console.log(`✅ Manifest encontrado en: ${path}`);
+                            break;
+                        } else {
+                            console.log(`❌ No encontrado en: ${path} (${response.status})`);
+                        }
+                    } catch (error) {
+                        console.log(`❌ Error al acceder a: ${path} - ${error.message}`);
+                        continue;
+                    }
+                }
+                
+                if (!response || !response.ok) {
+                    throw new Error(`No se pudo cargar spriteManifest.json desde ninguna ruta. Intentadas: ${possiblePaths.join(', ')}`);
+                }
+                
+                const text = await response.text();
+                console.log(`📄 Manifest cargado desde ${successPath} (${text.length} caracteres)`);
+                
+                // Verificar que el contenido parece ser JSON válido
+                if (!text.trim().startsWith('{')) {
+                    throw new Error(`El contenido no parece ser JSON válido. Primeros 100 chars: ${text.substring(0, 100)}`);
+                }
+                
+                this.manifest = JSON.parse(text);
+                console.log(`✅ Manifest parseado correctamente. Personajes: ${Object.keys(this.manifest).length}`);
+                
+            } catch (error) {
+                console.error('❌ Error loading sprite manifest:', error);
+                throw error;
+            }
+        }
+        return this.manifest;
+    }
+
     /**
      * Carga dinámicamente todas las animaciones de un personaje.
      * @param {string} characterFolder Nombre de la carpeta bajo sprites/
@@ -8,6 +66,7 @@ export class SpriteLoader {
      */
     // Carga sprites de un personaje según spriteManifest.json
     async loadSprites(characterName) {
+        const manifest = await this.loadManifest();
         const data = manifest[characterName];
         if (!data) {
             console.error(`No hay manifest para ${characterName}. Claves disponibles:`, Object.keys(manifest));

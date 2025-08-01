@@ -7,6 +7,11 @@ const path = require('path');
 const spritesDir = path.resolve(__dirname, '../sprites');
 const manifest = {};
 
+// Función para convertir paths de Windows a paths web
+function toWebPath(filePath) {
+  return filePath.replace(/\\/g, '/');
+}
+
 fs.readdirSync(spritesDir).forEach(character => {
   const charPath = path.join(spritesDir, character);
   if (!fs.statSync(charPath).isDirectory()) return;
@@ -17,9 +22,9 @@ fs.readdirSync(spritesDir).forEach(character => {
     const files = fs.readdirSync(statePath)
       .filter(f => f.match(/\.(png|gif)$/i))
       .sort((a, b) => a.localeCompare(b));
-    manifest[character][state] = files.map(f => path.join('sprites', character, state, f));
+    manifest[character][state] = files.map(f => toWebPath(path.join('sprites', character, state, f)));
   });
 });
 
 fs.writeFileSync(path.resolve(__dirname, '../spriteManifest.json'), JSON.stringify(manifest, null, 2));
-console.log('spriteManifest.json generado');
+console.log('spriteManifest.json generado con paths web compatibles');

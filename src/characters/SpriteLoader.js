@@ -1,137 +1,149 @@
-// SPRITE LOADER NUCLEAR - Versión que evita completamente problemas de MIME
+// SpriteLoader - Versión final limpia sin conflictos de MIME
 export class SpriteLoader {
     constructor() {
         this.manifest = null;
+        this.cache = new Map();
     }
 
     async loadManifest() {
         if (!this.manifest) {
             try {
-                console.log('🔄 SpriteLoader NUCLEAR: Iniciando carga...');
+                console.log('🎮 SpriteLoader: Iniciando carga de manifest...');
                 
-                // RUTA ALTERNATIVA PARA EVITAR CONFLICTOS
-                const manifestUrl = '/sprites-data.txt'; // Cambiar extensión
-                console.log(`📡 Solicitando: ${manifestUrl}`);
-                
-                const response = await fetch(manifestUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'text/plain', // Cambiar tipo esperado
-                        'Cache-Control': 'no-cache'
-                    }
+                // Intentar cargar desde archivo de texto para evitar MIME issues
+                let response = await fetch('/sprites-data.txt', {
+                    headers: { 'Accept': 'text/plain' }
                 });
                 
-                console.log(`📡 Response status: ${response.status}`);
-                console.log(`📡 Content-Type: ${response.headers.get('content-type')}`);
+                // Fallback a JSON si el TXT no existe
+                if (!response.ok) {
+                    console.log('⚠️ sprites-data.txt no encontrado, intentando JSON...');
+                    response = await fetch('/spriteManifest.json', {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                }
                 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`No se pudo cargar manifest: ${response.status}`);
                 }
                 
                 const text = await response.text();
-                console.log(`📄 Data received (${text.length} chars)`);
-                
-                // Verificar que es JSON válido
-                if (!text.trim().startsWith('{')) {
-                    throw new Error(`Invalid format. First 100 chars: ${text.substring(0, 100)}`);
-                }
-                
                 this.manifest = JSON.parse(text);
-                console.log(`✅ Manifest parsed. Characters: ${Object.keys(this.manifest).length}`);
+                
+                console.log(`✅ Manifest cargado: ${Object.keys(this.manifest).length} personajes`);
+                console.log('📋 Personajes disponibles:', Object.keys(this.manifest));
                 
             } catch (error) {
-                console.error('❌ SpriteLoader NUCLEAR Error:', error);
-                
-                // FALLBACK: Usar manifest embebido si falla
-                console.log('🔄 Using embedded fallback manifest...');
-                this.manifest = this.getEmbeddedManifest();
+                console.error('❌ Error cargando manifest:', error);
+                console.log('🔄 Usando manifest básico de emergencia...');
+                this.manifest = this.getBasicManifest();
             }
         }
         return this.manifest;
     }
 
-    // Manifest de emergencia embebido
-    getEmbeddedManifest() {
+    getBasicManifest() {
         return {
             "Baraka Complete Edicion": {
-                "Baraka Caminar": [
-                    "/sprites/Baraka Complete Edicion/Baraka Caminar/Baraka Caminar_00.png",
-                    "/sprites/Baraka Complete Edicion/Baraka Caminar/Baraka Caminar_01.png",
-                    "/sprites/Baraka Complete Edicion/Baraka Caminar/Baraka Caminar_02.png"
-                ],
-                "Baraka Damage": [
-                    "/sprites/Baraka Complete Edicion/Baraka Damage/Baraka Damage_00.png"
-                ],
-                "Baraka Dead": [
-                    "/sprites/Baraka Complete Edicion/Baraka Dead/Baraka Dead_00.png"
-                ]
+                "idle": ["/sprites/Baraka Complete Edicion/Baraka Portada_01.png"],
+                "walk": ["/sprites/Baraka Complete Edicion/Baraka Caminar/Baraka Caminar_00.png"],
+                "damage": ["/sprites/Baraka Complete Edicion/Baraka Damage/Baraka Damage_00.png"],
+                "dead": ["/sprites/Baraka Complete Edicion/Baraka Dead/Baraka Dead_00.png"]
             },
             "Cyrax Complete Edicion": {
-                "Cyrax Caminar": [
-                    "/sprites/Cyrax Complete Edicion/Cyrax Caminar/Cyrax Caminar_00.png",
-                    "/sprites/Cyrax Complete Edicion/Cyrax Caminar/Cyrax Caminar_01.png"
-                ],
-                "Cyrax Damage": [
-                    "/sprites/Cyrax Complete Edicion/Cyrax Damage/Cyrax Damage_00.png"
-                ],
-                "Cyrax Dead": [
-                    "/sprites/Cyrax Complete Edicion/Cyrax Dead/Cyrax Dead_00.png"
-                ]
+                "idle": ["/sprites/Cyrax Complete Edicion/Cyrax Portada_01.png"],
+                "walk": ["/sprites/Cyrax Complete Edicion/Cyrax Caminar/Cyrax Caminar_00.png"],
+                "damage": ["/sprites/Cyrax Complete Edicion/Cyrax Damage/Cyrax Damage_00.png"],
+                "dead": ["/sprites/Cyrax Complete Edicion/Cyrax Dead/Cyrax Dead_00.png"]
             }
         };
     }
 
     async loadSprites(characterName) {
+        // Verificar cache primero
+        if (this.cache.has(characterName)) {
+            console.log(`📦 Sprites de ${characterName} desde cache`);
+            return this.cache.get(characterName);
+        }
+
         const manifest = await this.loadManifest();
         const data = manifest[characterName];
         
         if (!data) {
-            console.error(`❌ No manifest for ${characterName}. Available:`, Object.keys(manifest));
+            console.warn(`❌ No hay datos para ${characterName}`);
             
             // Buscar coincidencia parcial
-            const matchedKey = Object.keys(manifest).find(key => 
+            const similarKey = Object.keys(manifest).find(key => 
                 key.toLowerCase().includes(characterName.toLowerCase()) || 
                 characterName.toLowerCase().includes(key.toLowerCase())
             );
             
-            if (matchedKey) {
-                console.log(`🔄 Using ${matchedKey} as fallback`);
-                return this.loadSprites(matchedKey);
+            if (similarKey) {
+                console.log(`🔄 Usando ${similarKey} como alternativa`);
+                return this.loadSprites(similarKey);
             }
             
-            throw new Error(`No sprite data for character: ${characterName}`);
+            // Usar sprites básicos si no hay coincidencia
+            return this.createBasicSprites();
         }
 
-        // Cargar imágenes
+        console.log(`🖼️ Cargando sprites para ${characterName}...`);
+        
         const sprites = {};
-        for (const stateFolder in data) {
-            const files = data[stateFolder];
-            console.log(`🖼️ Loading ${files.length} images for ${characterName}/${stateFolder}`);
-            
-            const imgs = await Promise.all(files.map(file => new Promise((resolve, reject) => {
-                const img = new Image();
-                let url = file.replace(/\\/g, '/');
-                if (!url.startsWith('/')) url = '/' + url;
+        for (const [stateName, files] of Object.entries(data)) {
+            try {
+                const images = await Promise.all(
+                    files.map(file => this.loadSingleImage(file))
+                );
+                sprites[stateName] = images.filter(img => img !== null);
                 
-                img.onload = () => {
-                    console.log(`✅ Image loaded: ${url}`);
-                    resolve(img);
-                };
+                if (sprites[stateName].length === 0) {
+                    sprites[stateName] = [this.createPlaceholderImage()];
+                }
                 
-                img.onerror = (err) => {
-                    console.error(`❌ Failed to load image: ${url}`, err);
-                    // No rechazar, usar imagen placeholder
-                    resolve(this.createPlaceholderImage());
-                };
-                
-                img.src = url;
-            })));
-            
-            sprites[stateFolder] = imgs;
+            } catch (error) {
+                console.warn(`⚠️ Error cargando estado ${stateName}:`, error);
+                sprites[stateName] = [this.createPlaceholderImage()];
+            }
         }
 
-        console.log(`✅ All sprites loaded for ${characterName}`);
+        // Guardar en cache
+        this.cache.set(characterName, sprites);
+        console.log(`✅ Sprites cargados para ${characterName}:`, Object.keys(sprites));
+        
         return sprites;
+    }
+
+    async loadSingleImage(filePath) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            
+            img.onload = () => {
+                console.log(`✅ Imagen cargada: ${filePath}`);
+                resolve(img);
+            };
+            
+            img.onerror = () => {
+                console.warn(`❌ Error cargando: ${filePath}`);
+                resolve(null);
+            };
+            
+            // Asegurar ruta correcta
+            let url = filePath.replace(/\\/g, '/');
+            if (!url.startsWith('/')) url = '/' + url;
+            
+            img.src = url;
+        });
+    }
+
+    createBasicSprites() {
+        const placeholder = this.createPlaceholderImage();
+        return {
+            idle: [placeholder],
+            walk: [placeholder],
+            damage: [placeholder],
+            dead: [placeholder]
+        };
     }
 
     createPlaceholderImage() {
@@ -139,11 +151,14 @@ export class SpriteLoader {
         canvas.width = 100;
         canvas.height = 100;
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#ff0000';
-        ctx.fillRect(0, 0, 100, 100);
+        
+        // Crear sprite básico
+        ctx.fillStyle = '#4a90e2';
+        ctx.fillRect(10, 10, 80, 80);
         ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
-        ctx.fillText('NO IMG', 30, 50);
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('SPRITE', 50, 55);
         
         const img = new Image();
         img.src = canvas.toDataURL();
@@ -158,5 +173,10 @@ export class SpriteLoader {
     async hasCharacter(characterName) {
         const manifest = await this.loadManifest();
         return !!manifest[characterName];
+    }
+
+    clearCache() {
+        this.cache.clear();
+        console.log('🧹 Cache de sprites limpiado');
     }
 }

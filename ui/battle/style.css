@@ -26,6 +26,98 @@
     padding: 0 20px;
     pointer-events: none;
 }
+/* HUD de batalla */
+.round-info {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px #000;
+}
+.round-info #roundTimer {
+    background: rgba(0,0,0,0.5);
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 20px;
+}
+.round-wins .wins {
+    margin: 0 5px;
+    font-size: 20px;
+}
+.hud-bar {
+    position: absolute;
+    top: 50px;
+    width: 250px;
+    height: 20px;
+    background: #222;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.health-p1 {
+    left: 20px;
+}
+.health-p2 {
+    right: 20px;
+}
+.fill {
+    height: 100%;
+    background: linear-gradient(to right, #ff0000, #ff6600);
+    width: 100%;
+    transition: width 0.2s ease;
+}
+.special-fill {
+    height: 4px;
+    background: linear-gradient(to right, #00f, #0ff);
+    width: 0%;
+    transition: width 0.5s ease;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.combo {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ff0;
+    font-size: 20px;
+    text-shadow: 1px 1px 2px #000;
+    font-family: 'Arial', sans-serif;
+}
+/* Pop-up de daño */
+.damage-popup {
+    position: absolute;
+    pointer-events: none;
+    color: #f33;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    transform: translateY(0);
+    opacity: 1;
+    z-index: 1000;
+}
+.damage-popup.fade-out {
+    transform: translateY(-20px);
+    opacity: 0;
+}
+/* Sacudida de cámara */
+.shake {
+    animation: shake 0.3s;
+}
+@keyframes shake {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(5px, 0); }
+    50% { transform: translate(-5px, 0); }
+    75% { transform: translate(5px, 0); }
+    100% { transform: translate(0, 0); }
+}
 
 .health-bar {
     width: 300px;

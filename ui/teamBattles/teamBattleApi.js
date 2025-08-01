@@ -9,28 +9,42 @@ export async function createTeamBattle(data, token) {
     },
     body: JSON.stringify(data)
   });
-  if (!res.ok) throw new Error('Error creando batalla');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error creando batalla';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return await res.json();
 }
 
 export async function getTeamBattles(token) {
   const res = await fetch(`${BASE_URL}/api/team-battles`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!res.ok) throw new Error('Error obteniendo batallas');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error obteniendo batallas';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return await res.json();
 }
 
 export async function getTeamBattleById(id, token) {
   const res = await fetch(`${BASE_URL}/api/team-battles/${id}`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!res.ok) throw new Error('Error obteniendo batalla');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error obteniendo batalla';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return await res.json();
 }
 
+// Seleccionar bando en batalla de equipos
 export async function selectSide(id, side, token) {
-  const res = await fetch(`${BASE_URL}/api/team-battles/select-side`, {
+  console.log('[API][selectSide] Request:', { id, side });
+  const res = await fetch(`${BASE_URL}/api/team-battles/${id}/select-side`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,16 +52,24 @@ export async function selectSide(id, side, token) {
     },
     body: JSON.stringify({ side })
   });
-  if (!res.ok) throw new Error('Error seleccionando bando');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error seleccionando bando';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return await res.json();
 }
 
 export async function getBattleState(id, token) {
   const res = await fetch(`${BASE_URL}/api/team-battles/${id}/state`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!res.ok) throw new Error('Error obteniendo estado');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error obteniendo estado';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return await res.json();
 }
 
 export async function sendRoundActions(id, actions, token) {
@@ -99,19 +121,32 @@ export async function finishTeamBattle(id, token) {
 }
 
 export async function restartTeamBattle(id, token) {
-  const res = await fetch(`${BASE_URL}/api/team-battles/${id}/restart`, {
+  console.log('[API][startBattle] Request iniciar/reiniciar batalla:', id);
+  const res = await fetch(`${BASE_URL}/api/team-battles/${id}/start`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Error reiniciando batalla');
   return res.json();
 }
+// Iniciar o reiniciar batalla (alias para restart)
+export const startTeamBattle = restartTeamBattle;
 
 export async function deleteTeamBattle(id, token) {
   const res = await fetch(`${BASE_URL}/api/team-battles/${id}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
-  if (!res.ok) throw new Error('Error eliminando batalla');
-  return res.json();
+  if (!res.ok) {
+    let msg = 'Error eliminando batalla';
+    try { msg = (await res.json()).message || msg; } catch {}
+    throw new Error(msg);
+  }
+  // Si la respuesta está vacía, no intentes hacer res.json()
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {};
+  }
 }

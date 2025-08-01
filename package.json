@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "generate-manifest": "node scripts/generateSpriteManifest.js"
+  },
   "dependencies": {
     "three": "^0.178.0"
   },

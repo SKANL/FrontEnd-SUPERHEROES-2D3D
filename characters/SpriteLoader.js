@@ -1,78 +1,139 @@
+import manifest from '../spriteManifest.json';
 // Carga de sprites para luchadores
 export class SpriteLoader {
-    async loadBarakaSprites() {
-        const base = 'sprites/Baraka Complete Edicion';
-        const folders = {
-            idle: 'Baraka Style',
-            walking: 'Baraka Caminar',
-            punching: 'Baraka Cuchillas',
-            hit: 'Baraka Damage',
-            kicking: 'Baraka Patadas',
-            jump: 'Baraka Saltar+Girar',
-            defense: 'Baraka Defensa',
-            dead: 'Baraka Dead',
-            winner: 'Baraka Winner',
-            pose: 'Baraka Poses',
-            golpe: 'Baraka Golpes'
-        };
-        const files = {
-            idle: [
-                'Baraka Style_00.png','Baraka Style_01.png','Baraka Style_02.png','Baraka Style_03.png'
-            ],
-            walking: [
-                'Baraka Caminar_00.png','Baraka Caminar_01.png','Baraka Caminar_02.png','Baraka Caminar_03.png','Baraka Caminar_04.png','Baraka Caminar_05.png','Baraka Caminar_06.png','Baraka Caminar_07.png','Baraka Caminar_08.png'
-            ],
-            punching: [
-                'Baraka Cuchillas_00.png','Baraka Cuchillas_01.png','Baraka Cuchillas_02.png','Baraka Cuchillas_03.png','Baraka Cuchillas_04.png','Baraka Cuchillas_05.png','Baraka Cuchillas_06.png','Baraka Cuchillas_07.png','Baraka Cuchillas_08.png','Baraka Cuchillas_09.png','Baraka Cuchillas_010.png','Baraka Cuchillas_011.png','Baraka Cuchillas_012.png','Baraka Cuchillas_013.png'
-            ],
-            hit: [
-                'Baraka Damage_00.png','Baraka Damage_01.png','Baraka Damage_02.png','Baraka Damage_03.png','Baraka Damage_04.png','Baraka Damage_05.png','Baraka Damage_06.png','Baraka Damage_07.png','Baraka Damage_08.png','Baraka Damage_09.png','Baraka Damage_010.png','Baraka Damage_011.png','Baraka Damage_012.png','Baraka Damage_013.png','Baraka Damage_014.png','Baraka Damage_015.png','Baraka Damage_016.png','Baraka Damage_017.png','Baraka Damage_018.png','Baraka Damage_019.png','Baraka Damage_020.png','Baraka Damage_021.png','Baraka Damage_022.png','Baraka Damage_023.png','Baraka Damage_024.png','Baraka Damage_025.png','Baraka Damage_026.png','Baraka Damage_027.png','Baraka Damage_028.png','Baraka Damage_029.png','Baraka Damage_030.png'
-            ],
-            kicking: [
-                'Baraka Patada_00.png','Baraka Patada_01.png','Baraka Patada_02.png','Baraka Patada_03.png','Baraka Patada_04.png','Baraka Patada_05.png','Baraka Patada_06.png','Baraka Patada_07.png','Baraka Patada_08.png','Baraka Patada_09.png','Baraka Patada_010.png','Baraka Patada_011.png','Baraka Patada_012.png','Baraka Patada_013.png','Baraka Patada_014.png','Baraka Patada_015.png','Baraka Patada_016.png','Baraka Patada_017.png','Baraka Patada_018.png','Baraka Patada_019.png','Baraka Patada_020.png','Baraka Patada_021.png','Baraka Patada_022.png','Baraka Patada_023.png','Baraka Patada_024.png','Baraka Patada_025.png','Baraka Patada_026.png','Baraka Patada_027.png','Baraka Patada_028.png','Baraka Patada_029.png','Baraka Patada_030.png','Baraka Patada_031.png'
-            ],
-            jump: [
-                'Baraka Saltar+Girar_00.png','Baraka Saltar+Girar_01.png','Baraka Saltar+Girar_02.png','Baraka Saltar+Girar_03.png','Baraka Saltar+Girar_04.png','Baraka Saltar+Girar_05.png','Baraka Saltar+Girar_06.png','Baraka Saltar+Girar_07.png','Baraka Saltar+Girar_08.png','Baraka Saltar+Girar_09.png','Baraka Saltar+Girar_010.png','Baraka Saltar+Girar_011.png','Baraka Saltar+Girar_012.png','Baraka Saltar+Girar_013.png'
-            ],
-            defense: [
-                'Baraka Defensa_00.png','Baraka Defensa_01.png','Baraka Defensa_02.png','Baraka Defensa_03.png','Baraka Defensa_04.png','Baraka Defensa_05.png'
-            ],
-            dead: [
-                'Baraka Dead_00.png','Baraka Dead_01.png','Baraka Dead_02.png','Baraka Dead_03.png','Baraka Dead_04.png','Baraka Dead_05.png','Baraka Dead_06.png','Baraka Dead_07.png','Baraka Dead_08.png','Baraka Dead_09.png'
-            ],
-            winner: [
-                'Baraka Winner_00.png','Baraka Winner_01.png','Baraka Winner_02.png','Baraka Winner_03.png','Baraka Winner_04.png','Baraka Winner_05.png','Baraka Winner_06.png'
-            ],
-            pose: [
-                'Baraka Pose_00.png','Baraka Pose_01.png','Baraka Pose_02.png'
-            ],
-            golpe: [
-                'Baraka Golpes_00.png','Baraka Golpes_01.png','Baraka Golpes_02.png','Baraka Golpes_03.png','Baraka Golpes_04.png','Baraka Golpes_05.png','Baraka Golpes_06.png','Baraka Golpes_07.png','Baraka Golpes_08.png','Baraka Golpes_09.png'
-            ]
-        };
-        const animations = {};
-        for (const [state, folder] of Object.entries(folders)) {
-            animations[state] = await this.loadImages(
-                folder ? `${base}/${folder}` : base,
-                files[state]
+    /**
+     * Carga dinámicamente todas las animaciones de un personaje.
+     * @param {string} characterFolder Nombre de la carpeta bajo sprites/
+     * @returns {Promise<Record<string, HTMLImageElement[]>>}
+     */
+    // Carga sprites de un personaje según spriteManifest.json
+    async loadSprites(characterName) {
+        const data = manifest[characterName];
+        if (!data) {
+            console.error(`No hay manifest para ${characterName}. Claves disponibles:`, Object.keys(manifest));
+            // Buscar nombre que pueda coincidir parcialmente (por si hay problemas de espacios o mayúsculas)
+            const matchedKey = Object.keys(manifest).find(key => 
+                key.toLowerCase().includes(characterName.toLowerCase()) || 
+                characterName.toLowerCase().includes(key.toLowerCase())
             );
+            if (matchedKey) {
+                console.log(`Usando ${matchedKey} como alternativa`);
+                return this.loadSprites(matchedKey);
+            }
+            throw new Error(`No hay manifest para ${characterName}`);
         }
+
+        // Cargar imágenes en crudo
+        const raw = {};
+        for (const stateFolder in data) {
+            const files = data[stateFolder];
+            console.log(`Cargando ${files.length} imágenes para ${characterName}/${stateFolder}`);
+            
+            const imgs = await Promise.all(files.map(file => new Promise(resolve => {
+                const img = new Image();
+                // Normalizar separadores de ruta para URL
+                let url = file.replace(/\\/g, '/');
+                if (!url.startsWith('/')) url = '/' + url;
+                img.src = url;
+                img.onload = () => {
+                    console.log(`Imagen cargada: ${url}`);
+                    resolve(img);
+                };
+                img.onerror = (err) => {
+                    console.error(`Error cargando imagen ${url}`, err);
+                    resolve(null);
+                };
+            })));
+            
+            raw[stateFolder] = imgs.filter(i => i);
+            console.log(`${raw[stateFolder].length} imágenes válidas cargadas para ${stateFolder}`);
+        }
+
+        // Mapear carpetas a estados del juego
+        const animations = {};
+        for (const folder in raw) {
+            const list = raw[folder];
+            
+            // Mapear nombres de carpeta a estados del juego
+            const key = (folder.toLowerCase().includes('portada') || folder.toLowerCase().includes('poses')) ? 'idle'
+                : (folder.toLowerCase().includes('caminar')) ? 'walking'
+                : (folder.toLowerCase().includes('golpe')) ? 'punching'
+                : (folder.toLowerCase().includes('patada')) ? 'kicking'
+                : (folder.toLowerCase().includes('defens')) ? 'defense'
+                : (folder.toLowerCase().includes('dead') || folder.toLowerCase().includes('muert')) ? 'dead'
+                : (folder.toLowerCase().includes('winner') || folder.toLowerCase().includes('wins')) ? 'winner'
+                // Mapeos adicionales para habilidades especiales
+                : (folder.toLowerCase().includes('cuchilla') && !folder.toLowerCase().includes('rayo') && !folder.toLowerCase().includes('multi')) ? 'specialBlade'
+                : (folder.toLowerCase().includes('rayo')) ? 'rayBlade'
+                : (folder.toLowerCase().includes('multi')) ? 'multiBlade'
+                : (folder.toLowerCase().includes('agarrar') || folder.toLowerCase().includes('lanzar')) ? 'grab'
+                : (folder.toLowerCase().includes('freinship') || folder.toLowerCase().includes('friendship')) ? 'friendship'
+                : (folder.toLowerCase().includes('baba')) ? 'babality'
+                : (folder.toLowerCase().includes('style')) ? 'style'
+                : (folder.toLowerCase().includes('mariado') || folder.toLowerCase().includes('dizzy')) ? 'dizzy'
+                : folder;
+            
+            // Solo añadir si hay imágenes válidas
+            if (list && list.length > 0) {
+                animations[key] = list;
+                console.log(`Mapeado ${folder} → ${key} con ${list.length} imágenes`);
+            }
+        }
+
+        // Validar que tengamos al menos una animación idle
+        if (!animations['idle'] || animations['idle'].length === 0) {
+            console.warn(`No hay animación idle para ${characterName}, buscando alternativa`);
+            // Buscar cualquier animación con frames para usarla como idle
+            for (const key in animations) {
+                if (animations[key] && animations[key].length > 0) {
+                    console.log(`Usando ${key} como idle alternativo`);
+                    animations['idle'] = animations[key];
+                    break;
+                }
+            }
+        }
+
+        console.log(`Estados de animación disponibles para ${characterName}:`, Object.keys(animations));
         return animations;
     }
-
-    async loadPlayer2Sprites() {
-        // Si no existen sprites reales, usa los de Baraka
+    // Alias para compatibilidad: carga sprites de Baraka
+    async loadBarakaSprites() {
+        // Intentar cargar con el nombre completo
         try {
-            const base = 'sprites/player2';
-            const files = ['player2_idle.png'];
-            const images = await this.loadImages(base, files);
-            // Si la imagen se carga correctamente, úsala
-            if (images[0] && images[0].complete && images[0].naturalWidth > 0) {
-                return { idle: images };
+            return await this.loadSprites('Baraka Complete Edicion');
+        } catch (error) {
+            console.warn("Error cargando 'Baraka Complete Edicion', intentando con 'Baraka':", error);
+            try {
+                // Intento alternativo con nombre parcial
+                const barakaKey = Object.keys(manifest).find(key => key.includes('Baraka'));
+                if (barakaKey) {
+                    console.log(`Encontrada clave alternativa: ${barakaKey}`);
+                    return await this.loadSprites(barakaKey);
+                }
+            } catch (e) {
+                console.error("No se pudo cargar ningún personaje Baraka:", e);
             }
-        } catch (e) {}
-        // Si no existe, usa los sprites de Baraka
-        return await this.loadBarakaSprites();
+            
+            // Si todo falla, carga un personaje genérico
+            const firstCharacter = Object.keys(manifest)[0];
+            if (firstCharacter) {
+                console.log(`Usando personaje alternativo: ${firstCharacter}`);
+                return await this.loadSprites(firstCharacter);
+            } else {
+                throw new Error("No hay personajes disponibles en el manifest");
+            }
+        }
+    }
+
+    /**
+     * Carga sprites de player2 o utiliza Baraka como fallback.
+     */
+    async loadPlayer2Sprites() {
+        try {
+            return await this.loadSprites('player2');
+        } catch {
+            return this.loadBarakaSprites();
+        }
     }
 
     async loadImages(folder, files) {

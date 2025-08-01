@@ -54,14 +54,118 @@ button[type="submit"] {
   font-weight: bold;
   cursor: pointer;
 }
-#teamBattlesList li {
-  margin-bottom: 0.7rem;
+
+/* Tarjetas de batallas */
+#teamBattlesList.battle-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.battle-card {
   background: #2c3146;
-  padding: 0.7rem;
-  border-radius: 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0003;
+  padding: 1.1rem 1rem 0.7rem 1rem;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
+  min-height: 120px;
+  transition: transform 0.12s;
+}
+.battle-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 6px 18px #0005;
+}
+.battle-card-content {
+  margin-bottom: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.battle-id {
+  font-size: 0.93rem;
+  color: #ffb300;
+  word-break: break-all;
+  margin-bottom: 0.1rem;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.battle-id .mono {
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  background: #23283b;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  color: #ffd54f;
+  font-size: 0.93em;
+}
+.battle-mode {
+  font-size: 1.01rem;
+  margin-bottom: 0.1rem;
+  color: #ffd54f;
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+.battle-status {
+  color: #fff;
+  font-size: 0.93em;
+  background: #3a3f5a;
+  border-radius: 4px;
+  padding: 0.1em 0.5em;
+  margin-left: 0.5em;
+}
+.battle-rounds {
+  font-size: 0.95rem;
+  color: #b3e5fc;
+}
+.battle-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+.team-list {
+  color: #fff;
+  font-size: 0.95em;
+}
+.alias {
+  color: #b3e5fc;
+  font-size: 0.92em;
+}
+.battle-meta {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.88em;
+  color: #aaa;
+  margin-top: 0.2rem;
+}
+.battle-card-actions {
+  display: flex;
+  gap: 0.7rem;
+}
+.battle-card-actions button {
+  background: #ffb300;
+  color: #23283b;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.15s;
+}
+.battle-card-actions button:hover {
+  background: #ffd54f;
+}
+.empty-msg {
+  color: #aaa;
+  text-align: center;
+  padding: 1.5rem 0;
 }
 #battle-details-section {
   background: #2c3146;

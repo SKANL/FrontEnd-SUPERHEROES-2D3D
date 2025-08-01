@@ -348,6 +348,9 @@ function promptForSide() {
                     <button id="chooseHero">Jugar con Héroes</button>
                     <button id="chooseVillain">Jugar con Villanos</button>
                 </div>
+                <div class="side-skip">
+                    <button id="skipSelection">Saltar selección (usar héroes por defecto)</button>
+                </div>
             </div>
         `;
         document.body.appendChild(sideSelector);
@@ -399,6 +402,25 @@ function promptForSide() {
         villainBtn.style.backgroundColor = '#f44336';
         villainBtn.style.boxShadow = '0 4px 8px rgba(244, 67, 54, 0.3)';
         
+        // Botón de saltar selección
+        const skipBtn = document.getElementById('skipSelection');
+        if (skipBtn) {
+            skipBtn.style.backgroundColor = '#9e9e9e';
+            skipBtn.style.color = 'white';
+            skipBtn.style.border = 'none';
+            skipBtn.style.borderRadius = '5px';
+            skipBtn.style.padding = '10px 20px';
+            skipBtn.style.marginTop = '20px';
+            skipBtn.style.cursor = 'pointer';
+            skipBtn.style.fontSize = '14px';
+            
+            skipBtn.addEventListener('click', () => {
+                console.log('Usuario saltó la selección de bando');
+                sideSelector.remove();
+                resolve('hero'); // Por defecto usar héroes
+            });
+        }
+        
         // Eventos para seleccionar lado
         heroBtn.addEventListener('click', async () => {
             console.log('Usuario seleccionó bando: héroes');
@@ -406,21 +428,33 @@ function promptForSide() {
                 heroBtn.disabled = true;
                 heroBtn.textContent = 'Seleccionando...';
                 
-                await selectSide(battleId, 'hero', token);
-                console.log('Bando de héroe seleccionado exitosamente en la API');
+                console.log(`Intentando seleccionar bando "hero" para batalla ${battleId}`);
+                const result = await selectSide(battleId, 'hero', token);
+                console.log('Bando de héroe seleccionado exitosamente en la API:', result);
                 
                 sideSelector.remove();
                 resolve('hero');
             } catch (error) {
                 console.error('Error seleccionando héroe:', error);
-                showError('Error seleccionando bando: ' + (error.message || 'Error desconocido'));
+                
+                // Mensaje de error más específico
+                let errorMessage = 'Error seleccionando bando de héroes';
+                if (error.message.includes('400')) {
+                    errorMessage = 'El servidor rechazó la selección. Verifica que la batalla sea válida.';
+                } else if (error.message.includes('404')) {
+                    errorMessage = 'No se encontró la batalla especificada.';
+                } else if (error.message.includes('401')) {
+                    errorMessage = 'No tienes autorización para esta acción.';
+                }
+                
+                showError(errorMessage);
                 
                 // Habilitar botón nuevamente
                 heroBtn.disabled = false;
                 heroBtn.textContent = 'Jugar con Héroes';
                 
-                // Resolver con un valor por defecto para evitar que se rompa
-                resolve('hero');
+                // No resolver para que el usuario pueda intentar de nuevo
+                // resolve('hero');
             }
         });
         
@@ -430,21 +464,33 @@ function promptForSide() {
                 villainBtn.disabled = true;
                 villainBtn.textContent = 'Seleccionando...';
                 
-                await selectSide(battleId, 'villain', token);
-                console.log('Bando de villano seleccionado exitosamente en la API');
+                console.log(`Intentando seleccionar bando "villain" para batalla ${battleId}`);
+                const result = await selectSide(battleId, 'villain', token);
+                console.log('Bando de villano seleccionado exitosamente en la API:', result);
                 
                 sideSelector.remove();
                 resolve('villain');
             } catch (error) {
                 console.error('Error seleccionando villano:', error);
-                showError('Error seleccionando bando: ' + (error.message || 'Error desconocido'));
+                
+                // Mensaje de error más específico
+                let errorMessage = 'Error seleccionando bando de villanos';
+                if (error.message.includes('400')) {
+                    errorMessage = 'El servidor rechazó la selección. Verifica que la batalla sea válida.';
+                } else if (error.message.includes('404')) {
+                    errorMessage = 'No se encontró la batalla especificada.';
+                } else if (error.message.includes('401')) {
+                    errorMessage = 'No tienes autorización para esta acción.';
+                }
+                
+                showError(errorMessage);
                 
                 // Habilitar botón nuevamente
                 villainBtn.disabled = false;
                 villainBtn.textContent = 'Jugar con Villanos';
                 
-                // Resolver con un valor por defecto para evitar que se rompa
-                resolve('villain');
+                // No resolver para que el usuario pueda intentar de nuevo
+                // resolve('villain');
             }
         });
     });

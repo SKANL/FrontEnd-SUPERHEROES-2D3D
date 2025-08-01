@@ -10,9 +10,9 @@ export const GAME_CHARACTERS = {
     cities: ["Outworld", "Earthrealm"],
     description: "Guerrero Tarkatan con cuchillas en los brazos",
     portraits: [
-      "sprites/Baraka Complete Edicion/Baraka Portada_01.png",
-      "sprites/Baraka Complete Edicion/Baraka Portada_02.png",
-      "sprites/Baraka Complete Edicion/Baraka Portada_03.png"
+      "/sprites/Baraka Complete Edicion/Baraka Portada_01.png",
+      "/sprites/Baraka Complete Edicion/Baraka Portada_02.png",
+      "/sprites/Baraka Complete Edicion/Baraka Portada_03.png"
     ],
     defaultStats: {
       health: 120,
@@ -54,9 +54,22 @@ export const GAME_CHARACTERS = {
     cities: ["Earthrealm", "Cyber Initiative"],
     description: "Ninja cyborg con arsenal de armas tecnológicas",
     portraits: [
-      "sprites/Cyrax Complete Edicion/Cyrax Portada_01.png",
-      "sprites/Cyrax Complete Edicion/Cyrax Portada_04.png",
-      "sprites/Cyrax Complete Edicion/Cyrax Portada_05.png"
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_01.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_04.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_05.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_07.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_08.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_09.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_010.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_011.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_012.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_013.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_014.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_015.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_016.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_017.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_018.png",
+      "/sprites/Cyrax Complete Edicion/Cyrax Portada_019.png"
     ],
     defaultStats: {
       health: 150,
@@ -143,6 +156,7 @@ export function createApiDataFromGameCharacter(character, customData = {}, targe
     // Datos del juego
     gameCharacterId: character.id,
     gameCharacterName: character.name,
+    gameCharacterPortrait: customData.selectedPortrait || character.portraits[0], // Usar portada seleccionada
     spriteFolder: character.spriteFolder,
     characterType: character.type,
     faction: faction,

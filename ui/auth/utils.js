@@ -46,8 +46,12 @@ export function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     
-    // Redirigir siempre al login principal
-    window.location.href = '../auth/index.html';
+    // Redirigir al login usando SPA si está disponible
+    if (window.loadLoginView) {
+        window.loadLoginView();
+    } else {
+        window.location.href = '/';
+    }
 }
 
 // Verificar si es token de desarrollo

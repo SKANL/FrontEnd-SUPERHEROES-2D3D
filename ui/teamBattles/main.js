@@ -17,16 +17,57 @@ import {
 } from './teamBattleApi.js';
 
 const token = getToken();
-if (!token) window.location.href = '../auth/index.html';
+if (!token) {
+  if (window.loadLoginView) {
+    window.loadLoginView();
+  } else {
+    window.location.href = '/';
+  }
+}
 
 document.getElementById('logoutBtn').onclick = logout;
+
+// Cache para evitar cargas repetitivas
+let battlesCache = null;
+let heroesCache = null;
+let villainsCache = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 30000; // 30 segundos
+
+function isCacheValid() {
+  return (Date.now() - cacheTimestamp) < CACHE_DURATION;
+}
+
+function clearCache() {
+  battlesCache = null;
+  heroesCache = null;
+  villainsCache = null;
+  cacheTimestamp = 0;
+}
 
 // Load heroes and villains for selection
 async function loadTeamOptions() {
   try {
     console.log('[DEBUG] Cargando opciones de equipos...');
-    const heroes = await getHeroes();
-    const villains = await getVillains();
+    
+    // Usar cache si está disponible y válido
+    let heroes, villains;
+    
+    if (isCacheValid() && heroesCache && villainsCache) {
+      console.log('[DEBUG] Usando datos del cache');
+      heroes = heroesCache;
+      villains = villainsCache;
+    } else {
+      console.log('[DEBUG] Cargando datos frescos de la API');
+      heroes = await getHeroes();
+      villains = await getVillains();
+      
+      // Guardar en cache
+      heroesCache = heroes;
+      villainsCache = villains;
+      cacheTimestamp = Date.now();
+    }
+    
     console.log('[DEBUG] Héroes recibidos:', heroes);
     console.log('[DEBUG] Villanos recibidos:', villains);
     console.log('[DEBUG] Cantidad de héroes:', heroes?.length || 0);
@@ -68,6 +109,9 @@ createForm.onsubmit = async (e) => {
     const battle = await createTeamBattle({ heroIds, villainIds, mode }, token);
     console.log('[DEBUG] Batalla creada:', battle);
     showSuccess('Batalla creada');
+    
+    // Limpiar cache para forzar recarga de batallas
+    clearCache();
     await loadBattles();
   } catch (err) {
     console.error('[DEBUG] Error creando batalla:', err);
@@ -79,13 +123,17 @@ createForm.onsubmit = async (e) => {
 async function loadBattles() {
   try {
     console.log('[DEBUG] Iniciando carga de batallas...');
+    
+    // Mostrar indicador de carga
+    const list = document.getElementById('teamBattlesList');
+    list.innerHTML = '<div class="loading-msg">⏳ Cargando batallas...</div>';
+    
     const battles = await getTeamBattles(token);
     console.log('[DEBUG] Batallas cargadas:', battles);
     console.log('[DEBUG] Tipo de batallas:', typeof battles);
     console.log('[DEBUG] Es array:', Array.isArray(battles));
     console.log('[DEBUG] Cantidad de batallas:', battles?.length);
     
-    const list = document.getElementById('teamBattlesList');
     list.innerHTML = '';
     
     if (!battles || !Array.isArray(battles) || battles.length === 0) {
@@ -141,8 +189,25 @@ async function loadBattles() {
     console.error('[DEBUG] Error cargando batallas:', err);
     console.error('[DEBUG] Error details:', err.message, err.stack);
     const list = document.getElementById('teamBattlesList');
-    list.innerHTML = '<div class="error-msg">Error cargando batallas. Verifica tu conexión y vuelve a intentar.</div>';
-    showError('Error cargando batallas: ' + err.message);
+    
+    // Mostrar error más específico
+    let errorMessage = 'Error cargando batallas.';
+    if (err.message.includes('429')) {
+      errorMessage = 'Demasiadas solicitudes. Espera un momento e intenta de nuevo.';
+    } else if (err.message.includes('JSON')) {
+      errorMessage = 'Error de comunicación con el servidor. Verifica tu conexión.';
+    } else if (err.message.includes('Failed to fetch')) {
+      errorMessage = 'No se puede conectar al servidor. Verifica tu conexión a internet.';
+    }
+    
+    list.innerHTML = `
+      <div class="error-msg">
+        <h3>❌ ${errorMessage}</h3>
+        <p>Detalles: ${err.message}</p>
+        <button onclick="loadBattles()" style="margin-top: 10px; padding: 5px 10px;">🔄 Reintentar</button>
+      </div>
+    `;
+    showError(errorMessage);
   }
 }
 
@@ -223,6 +288,38 @@ document.head.insertAdjacentHTML('beforeend', `
     }
     .primary-action-button:hover {
       background-color: #45a049 !important;
+    }
+    .loading-msg, .empty-msg, .error-msg {
+      text-align: center;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    .loading-msg {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border: 1px solid #bbdefb;
+    }
+    .empty-msg {
+      background-color: #f3e5f5;
+      color: #7b1fa2;
+      border: 1px solid #e1bee7;
+    }
+    .error-msg {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+    .error-msg button {
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .error-msg button:hover {
+      background-color: #1565c0;
     }
   </style>
 `);
@@ -359,3 +456,6 @@ window.startBattle = async (id) => {
 // Initial load
 loadTeamOptions();
 loadBattles();
+
+// Hacer loadBattles globalmente accesible para el botón de reintentar
+window.loadBattles = loadBattles;

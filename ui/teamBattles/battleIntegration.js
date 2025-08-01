@@ -22,7 +22,7 @@ export class TeamBattleGame extends Game {
         this.activeVillain = null;
         this.isGameActive = false;
         this.lastApiSync = 0;
-        this.syncInterval = 2000; // Sincronizar con la API cada 2 segundos
+        this.syncInterval = 5000; // Aumentado a 5 segundos para reducir carga en API
         this.token = getToken();
         
         // Debug: Mostrar qué datos se recibieron en el constructor
@@ -121,21 +121,35 @@ export class TeamBattleGame extends Game {
             
             const loader = new SpriteLoader();
             
-            // Validar que tenemos arrays válidos
-            if (!Array.isArray(this.heroes) || !Array.isArray(this.villains)) {
-                console.error('Error: Los datos de personajes no son arrays válidos');
-                console.log('Heroes recibido:', this.heroes);
-                console.log('Villains recibido:', this.villains);
-                throw new Error('Los datos de personajes no están en el formato correcto (deben ser arrays)');
+            // Validación más flexible de personajes
+            let processedHeroes = [];
+            let processedVillains = [];
+            
+            // Normalizar heroes - puede venir como array o como objeto individual
+            if (Array.isArray(this.heroes)) {
+                processedHeroes = this.heroes;
+            } else if (this.heroes && typeof this.heroes === 'object') {
+                processedHeroes = [this.heroes];
+            }
+            
+            // Normalizar villains - puede venir como array o como objeto individual
+            if (Array.isArray(this.villains)) {
+                processedVillains = this.villains;
+            } else if (this.villains && typeof this.villains === 'object') {
+                processedVillains = [this.villains];
             }
             
             // Validar que tenemos al menos un personaje de cada tipo
-            if (this.heroes.length === 0 || this.villains.length === 0) {
+            if (processedHeroes.length === 0 || processedVillains.length === 0) {
                 console.error('Error: No hay suficientes personajes');
-                console.log('Cantidad de héroes:', this.heroes.length);
-                console.log('Cantidad de villanos:', this.villains.length);
-                throw new Error(`Faltan personajes: ${this.heroes.length} héroes, ${this.villains.length} villanos`);
+                console.log('Cantidad de héroes procesados:', processedHeroes.length);
+                console.log('Cantidad de villanos procesados:', processedVillains.length);
+                throw new Error(`Faltan personajes: ${processedHeroes.length} héroes, ${processedVillains.length} villanos`);
             }
+            
+            // Actualizar las referencias procesadas
+            this.heroes = processedHeroes;
+            this.villains = processedVillains;
             
             // Seleccionar el primer héroe y villano disponibles
             this.activeHero = this.heroes[0];
@@ -156,9 +170,24 @@ export class TeamBattleGame extends Game {
             console.log("Héroe activo:", this.activeHero);
             console.log("Villano activo:", this.activeVillain);
             
-            // Cargar sprites según el tipo de personaje
-            const heroSprites = await loader.loadBarakaSprites(); // Por ahora usamos Baraka para héroe
-            const villainSprites = await loader.loadPlayer2Sprites(); // Y Cyrax para villano
+            // CARGA DINÁMICA DE SPRITES BASADA EN DATOS DE LA BD
+            let heroSprites, villainSprites;
+            
+            try {
+                // Cargar sprites del héroe según su gameCharacterId o spriteFolder
+                heroSprites = await this.loadCharacterSprites(this.activeHero, loader, 'hero');
+            } catch (error) {
+                console.warn('Error cargando sprites específicos del héroe, usando Baraka por defecto:', error);
+                heroSprites = await loader.loadBarakaSprites();
+            }
+            
+            try {
+                // Cargar sprites del villano según su gameCharacterId o spriteFolder
+                villainSprites = await this.loadCharacterSprites(this.activeVillain, loader, 'villain');
+            } catch (error) {
+                console.warn('Error cargando sprites específicos del villano, usando Cyrax por defecto:', error);
+                villainSprites = await loader.loadPlayer2Sprites();
+            }
             
             if (!heroSprites || !villainSprites) {
                 throw new Error('Error cargando sprites de personajes');
@@ -208,6 +237,119 @@ export class TeamBattleGame extends Game {
         } catch (error) {
             console.error('Error en setupBattleCharacters:', error);
             throw error;
+        }
+    }
+
+    /**
+     * Cargar sprites de un personaje específico basándose en sus datos de la BD
+     * @param {Object} character - Datos del personaje desde la API
+     * @param {SpriteLoader} loader - Instancia del sprite loader
+     * @param {string} type - 'hero' o 'villain'
+     * @returns {Promise<Object>} - Sprites cargados
+     */
+    async loadCharacterSprites(character, loader, type) {
+        console.log(`=== CARGANDO SPRITES PARA ${type.toUpperCase()} ===`);
+        console.log('Datos del personaje:', character);
+        
+        // Lista de intentos en orden de prioridad
+        const loadAttempts = [];
+        
+        // Prioridad 1: spriteFolder
+        if (character.spriteFolder) {
+            loadAttempts.push({
+                method: 'spriteFolder',
+                value: character.spriteFolder,
+                description: `sprites folder: ${character.spriteFolder}`
+            });
+        }
+        
+        // Prioridad 2: gameCharacterName + "Complete Edicion"
+        if (character.gameCharacterName) {
+            loadAttempts.push({
+                method: 'gameCharacterName_complete',
+                value: `${character.gameCharacterName} Complete Edicion`,
+                description: `gameCharacterName completo: ${character.gameCharacterName} Complete Edicion`
+            });
+            
+            loadAttempts.push({
+                method: 'gameCharacterName',
+                value: character.gameCharacterName,
+                description: `gameCharacterName: ${character.gameCharacterName}`
+            });
+        }
+        
+        // Prioridad 3: gameCharacterId mapeado
+        if (character.gameCharacterId) {
+            const characterMap = {
+                'baraka': 'Baraka Complete Edicion',
+                'cyrax': 'Cyrax Complete Edicion',
+                'Baraka': 'Baraka Complete Edicion',
+                'Cyrax': 'Cyrax Complete Edicion'
+            };
+            
+            const mappedFolder = characterMap[character.gameCharacterId];
+            if (mappedFolder) {
+                loadAttempts.push({
+                    method: 'gameCharacterId_mapped',
+                    value: mappedFolder,
+                    description: `gameCharacterId mapeado: ${character.gameCharacterId} -> ${mappedFolder}`
+                });
+            }
+            
+            loadAttempts.push({
+                method: 'gameCharacterId',
+                value: character.gameCharacterId,
+                description: `gameCharacterId directo: ${character.gameCharacterId}`
+            });
+        }
+        
+        // Prioridad 4: Detección por nombre/alias
+        const searchTerms = [character.name, character.alias, character.characterName]
+            .filter(term => term && typeof term === 'string');
+            
+        for (const term of searchTerms) {
+            if (term.toLowerCase().includes('baraka')) {
+                loadAttempts.push({
+                    method: 'name_detection_baraka',
+                    value: 'Baraka Complete Edicion',
+                    description: `detectado Baraka en: ${term}`
+                });
+            }
+            
+            if (term.toLowerCase().includes('cyrax')) {
+                loadAttempts.push({
+                    method: 'name_detection_cyrax',
+                    value: 'Cyrax Complete Edicion',
+                    description: `detectado Cyrax en: ${term}`
+                });
+            }
+        }
+        
+        // Intentar cada método en orden
+        for (const attempt of loadAttempts) {
+            console.log(`Intentando cargar sprites por ${attempt.description}`);
+            try {
+                const sprites = await loader.loadSpritesWithFallback(attempt.value);
+                console.log(`✓ Sprites cargados exitosamente para ${type} usando: ${attempt.description}`);
+                return sprites;
+            } catch (error) {
+                console.warn(`✗ Error con ${attempt.description}:`, error.message);
+            }
+        }
+        
+        // Fallback final por tipo
+        console.log(`Usando fallback final para ${type}`);
+        if (type === 'hero') {
+            console.log('Cargando Baraka como fallback para héroe');
+            return await loader.loadBarakaSprites();
+        } else {
+            console.log('Intentando cargar Cyrax para villano, con fallback a Baraka');
+            try {
+                return await loader.loadSpritesWithFallback('Cyrax Complete Edicion');
+            } catch (error) {
+                console.warn('Cyrax no disponible, usando Baraka para villano');
+                return await loader.loadBarakaSprites();
+            }
         }
     }
 

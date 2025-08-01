@@ -27,7 +27,19 @@ export function renderHeroesList(heroes, { onDetail, onEdit, onDelete, isAdmin, 
         <span class="character-type-badge">${hero.characterType || 'unknown'}</span>
       </div>` : '';
 
+    // Obtener imagen de portada actualizada
+    const portraitImage = hero.gameCharacterPortrait ? 
+      `<div class="hero-portrait">
+        <img src="${hero.gameCharacterPortrait}" alt="${hero.name}" 
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div class="hero-icon-fallback" style="display:none;">🦸‍♂️</div>
+      </div>` : 
+      `<div class="hero-portrait">
+        <div class="hero-icon-fallback">🦸‍♂️</div>
+      </div>`;
+
     card.innerHTML = `
+      ${portraitImage}
       ${gameCharacterInfo}
       <div class="hero-info">
         <strong>${hero.name}</strong> <span>(${hero.alias})</span><br>
@@ -178,11 +190,21 @@ function renderCharacterSelectionForm({ onSubmit, onCancel }) {
 function renderTraditionalForm({ hero, isAdmin, isOwner, onSubmit, onCancel }) {
   const heroFormContainer = document.getElementById('heroFormContainer');
   
+  // Admin puede editar todo, el owner puede editar campos limitados
+  const canEditBasicFields = isAdmin || isOwner;
+  const canEditAdvancedFields = isAdmin;
+  
   heroFormContainer.innerHTML = `
     <div class='hero-detail-card'>
       <div class='hero-detail-header'>
         <div class='hero-avatar'>
-          <span class='hero-icon'>${hero?._id ? '✏️' : '🦸‍♂️'}</span>
+          ${hero?.gameCharacterPortrait ? `
+            <img src="${hero.gameCharacterPortrait}" alt="${hero.name}" 
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div class="hero-icon-fallback" style="display:none;">🦸‍♂️</div>
+          ` : `
+            <span class='hero-icon'>${hero?._id ? '✏️' : '🦸‍♂️'}</span>
+          `}
         </div>
         <div>
           <h2>${hero?._id ? 'Editar Héroe' : 'Crear Héroe (Modo Tradicional)'}</h2>
@@ -191,67 +213,123 @@ function renderTraditionalForm({ hero, isAdmin, isOwner, onSubmit, onCancel }) {
       </div>
       <form id='heroForm'>
         <div class='hero-detail-body'>
-          ${isAdmin ? `
-            <div class='hero-attr'><span>🆔 Nombre:</span> <input name='name' required value='${hero?.name || ''}'></div>
-            <div class='hero-attr'><span>🎭 Alias:</span> <input name='alias' required value='${hero?.alias || ''}'></div>
-          ` : ''}
+          ${canEditAdvancedFields ? `
+            <div class='hero-attr admin-only'><span>🆔 Nombre:</span> <input name='name' required value='${hero?.name || ''}'></div>
+            <div class='hero-attr admin-only'><span>🎭 Alias:</span> <input name='alias' required value='${hero?.alias || ''}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>🆔 Nombre:</span> <span class='readonly-value'>${hero?.name || 'N/A'}</span></div>
+            <div class='hero-attr readonly'><span>🎭 Alias:</span> <span class='readonly-value'>${hero?.alias || 'N/A'}</span></div>
+          `}
           
-          <div class='hero-attr'><span>🌆 Ciudad:</span> <input name='city' required value='${hero?.city || ''}'></div>
-          <div class='hero-attr'><span>🛡️ Equipo:</span> <input name='team' value='${hero?.team || ''}'></div>
+          ${canEditBasicFields ? `
+            <div class='hero-attr'><span>🌆 Ciudad:</span> <input name='city' required value='${hero?.city || ''}'></div>
+            <div class='hero-attr'><span>🛡️ Equipo:</span> <input name='team' value='${hero?.team || ''}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>🌆 Ciudad:</span> <span class='readonly-value'>${hero?.city || 'N/A'}</span></div>
+            <div class='hero-attr readonly'><span>🛡️ Equipo:</span> <span class='readonly-value'>${hero?.team || 'N/A'}</span></div>
+          `}
           
-          ${isAdmin ? `
-            <div class='hero-attr'><span>❤️ Salud:</span> <input name='health' type='number' min='0' max='200' value='${hero?.health ?? 100}'></div>
-            <div class='hero-attr'><span>⚔️ Ataque:</span> <input name='attack' type='number' min='0' max='200' value='${hero?.attack ?? 75}'></div>
-            <div class='hero-attr'><span>🛡️ Defensa:</span> <input name='defense' type='number' min='0' max='200' value='${hero?.defense ?? 45}'></div>
-            <div class='hero-attr'><span>✨ Especial:</span> <input name='specialAbility' value='${hero?.specialAbility || ''}'></div>
-          ` : ''}
+          ${canEditAdvancedFields ? `
+            <div class='hero-attr admin-only'><span>❤️ Salud:</span> <input name='health' type='number' min='0' max='200' value='${hero?.health ?? 100}'></div>
+            <div class='hero-attr admin-only'><span>⚔️ Ataque:</span> <input name='attack' type='number' min='0' max='200' value='${hero?.attack ?? 75}'></div>
+            <div class='hero-attr admin-only'><span>🛡️ Defensa:</span> <input name='defense' type='number' min='0' max='200' value='${hero?.defense ?? 45}'></div>
+            <div class='hero-attr admin-only'><span>✨ Especial:</span> <input name='specialAbility' value='${hero?.specialAbility || ''}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>❤️ Salud:</span> <span class='readonly-value'>${hero?.health ?? 100}</span></div>
+            <div class='hero-attr readonly'><span>⚔️ Ataque:</span> <span class='readonly-value'>${hero?.attack ?? 75}</span></div>
+            <div class='hero-attr readonly'><span>🛡️ Defensa:</span> <span class='readonly-value'>${hero?.defense ?? 45}</span></div>
+            <div class='hero-attr readonly'><span>✨ Especial:</span> <span class='readonly-value'>${hero?.specialAbility || 'N/A'}</span></div>
+          `}
           
-          <div class='hero-attr'><span>⚡ Stamina:</span> <input name='stamina' type='number' min='0' max='200' value='${hero?.stamina ?? 100}'></div>
-          <div class='hero-attr'><span>🏃‍♂️ Velocidad:</span> <input name='speed' type='number' min='0' max='200' value='${hero?.speed ?? 60}'></div>
-          <div class='hero-attr'><span>🎯 Crítico:</span> <input name='critChance' type='number' min='0' max='100' value='${hero?.critChance ?? 20}'></div>
-          <div class='hero-attr'><span>🔄 Estado:</span> <input name='status' value='${hero?.status || 'normal'}'></div>
+          ${canEditBasicFields ? `
+            <div class='hero-attr'><span>⚡ Stamina:</span> <input name='stamina' type='number' min='0' max='200' value='${hero?.stamina ?? 100}'></div>
+            <div class='hero-attr'><span>🔄 Estado:</span> <input name='status' value='${hero?.status || 'normal'}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>⚡ Stamina:</span> <span class='readonly-value'>${hero?.stamina ?? 100}</span></div>
+            <div class='hero-attr readonly'><span>🔄 Estado:</span> <span class='readonly-value'>${hero?.status || 'normal'}</span></div>
+          `}
           
-          ${isAdmin ? `
-            <div class='hero-attr'><span>🟢 Vivo:</span> <select name='isAlive'><option value='true' ${hero?.isAlive !== false ? 'selected' : ''}>Sí</option><option value='false' ${hero?.isAlive === false ? 'selected' : ''}>No</option></select></div>
-            <div class='hero-attr'><span>🏆 Rounds:</span> <input name='roundsWon' type='number' min='0' value='${hero?.roundsWon ?? 0}'></div>
-            <div class='hero-attr'><span>💥 Daño:</span> <input name='damage' type='number' min='0' value='${hero?.damage ?? 0}'></div>
-            <div class='hero-attr'><span>🤝 Afinidad:</span> <input name='teamAffinity' type='number' min='0' value='${hero?.teamAffinity ?? 0}'></div>
-            <div class='hero-attr'><span>🔋 Energía:</span> <input name='energyCost' type='number' min='0' value='${hero?.energyCost ?? 20}'></div>
-            <div class='hero-attr'><span>🛡️ Reducción:</span> <input name='damageReduction' type='number' min='0' value='${hero?.damageReduction ?? 0}'></div>
-          ` : ''}
+          ${canEditAdvancedFields ? `
+            <div class='hero-attr admin-only'><span>🏃‍♂️ Velocidad:</span> <input name='speed' type='number' min='0' max='200' value='${hero?.speed ?? 60}'></div>
+            <div class='hero-attr admin-only'><span>� Crítico:</span> <input name='critChance' type='number' min='0' max='100' value='${hero?.critChance ?? 20}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>�‍♂️ Velocidad:</span> <span class='readonly-value'>${hero?.speed ?? 60}</span></div>
+            <div class='hero-attr readonly'><span>🎯 Crítico:</span> <span class='readonly-value'>${hero?.critChance ?? 20}</span></div>
+          `}
+          
+          ${canEditAdvancedFields ? `
+            <div class='hero-attr admin-only'><span>🟢 Vivo:</span> <select name='isAlive'><option value='true' ${hero?.isAlive !== false ? 'selected' : ''}>Sí</option><option value='false' ${hero?.isAlive === false ? 'selected' : ''}>No</option></select></div>
+            <div class='hero-attr admin-only'><span>🏆 Rounds:</span> <input name='roundsWon' type='number' min='0' value='${hero?.roundsWon ?? 0}'></div>
+            <div class='hero-attr admin-only'><span>💥 Daño:</span> <input name='damage' type='number' min='0' value='${hero?.damage ?? 0}'></div>
+            <div class='hero-attr admin-only'><span>🤝 Afinidad:</span> <input name='teamAffinity' type='number' min='0' value='${hero?.teamAffinity ?? 0}'></div>
+            <div class='hero-attr admin-only'><span>🔋 Energía:</span> <input name='energyCost' type='number' min='0' value='${hero?.energyCost ?? 20}'></div>
+            <div class='hero-attr admin-only'><span>🛡️ Reducción:</span> <input name='damageReduction' type='number' min='0' value='${hero?.damageReduction ?? 0}'></div>
+          ` : `
+            <div class='hero-attr readonly'><span>🟢 Vivo:</span> <span class='readonly-value'>${hero?.isAlive !== false ? 'Sí' : 'No'}</span></div>
+            <div class='hero-attr readonly'><span>🏆 Rounds:</span> <span class='readonly-value'>${hero?.roundsWon ?? 0}</span></div>
+            <div class='hero-attr readonly'><span>💥 Daño:</span> <span class='readonly-value'>${hero?.damage ?? 0}</span></div>
+            <div class='hero-attr readonly'><span>🤝 Afinidad:</span> <span class='readonly-value'>${hero?.teamAffinity ?? 0}</span></div>
+            <div class='hero-attr readonly'><span>🔋 Energía:</span> <span class='readonly-value'>${hero?.energyCost ?? 20}</span></div>
+            <div class='hero-attr readonly'><span>🛡️ Reducción:</span> <span class='readonly-value'>${hero?.damageReduction ?? 0}</span></div>
+          `}
         </div>
         <div class='hero-detail-footer'>
           <button type='submit' class='save'>${hero?._id ? 'Guardar Cambios' : 'Crear Héroe'}</button>
           <button type='button' class='cancel'>Cancelar</button>
-          ${!hero && isAdmin ? `<button type='button' class='character-select-btn' onclick="showCharacterSelector()">🎮 Seleccionar del Juego</button>` : ''}
+          ${!hero && canEditAdvancedFields ? `<button type='button' class='character-select-btn' onclick="showCharacterSelector()">🎮 Seleccionar del Juego</button>` : ''}
         </div>
       </form>
     </div>
   `;
 
-  document.getElementById('heroForm').onsubmit = e => {
+  // Configurar eventos del formulario
+  const form = document.getElementById('heroForm');
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const form = e.target;
-    let data = Object.fromEntries(new FormData(form));
+    const formData = new FormData(form);
+    let data = Object.fromEntries(formData);
     
-    // Convertir campos numéricos y booleanos
-    data.health = Number(data.health);
-    data.stamina = Number(data.stamina);
-    data.speed = Number(data.speed);
-    data.critChance = Number(data.critChance);
-    data.isAlive = data.isAlive === 'true';
-    data.roundsWon = Number(data.roundsWon);
-    data.damage = Number(data.damage);
-    data.teamAffinity = Number(data.teamAffinity);
-    data.energyCost = Number(data.energyCost);
-    data.damageReduction = Number(data.damageReduction);
-    data.attack = Number(data.attack);
-    data.defense = Number(data.defense);
+    // Solo incluir campos que el usuario puede editar
+    const filteredData = {};
     
-    onSubmit(data);
-  };
+    // Campos básicos (editables por owner y admin)
+    if (canEditBasicFields) {
+      if (data.city) filteredData.city = data.city;
+      if (data.team) filteredData.team = data.team;
+      if (data.stamina) filteredData.stamina = Number(data.stamina);
+      if (data.status) filteredData.status = data.status;
+    }
+    
+    // Campos avanzados (solo admin)
+    if (canEditAdvancedFields) {
+      if (data.name) filteredData.name = data.name;
+      if (data.alias) filteredData.alias = data.alias;
+      if (data.health) filteredData.health = Number(data.health);
+      if (data.attack) filteredData.attack = Number(data.attack);
+      if (data.defense) filteredData.defense = Number(data.defense);
+      if (data.specialAbility) filteredData.specialAbility = data.specialAbility;
+      if (data.speed) filteredData.speed = Number(data.speed);
+      if (data.critChance) filteredData.critChance = Number(data.critChance);
+      if (data.isAlive !== undefined) filteredData.isAlive = data.isAlive === 'true';
+      if (data.roundsWon !== undefined) filteredData.roundsWon = Number(data.roundsWon);
+      if (data.damage !== undefined) filteredData.damage = Number(data.damage);
+      if (data.teamAffinity !== undefined) filteredData.teamAffinity = Number(data.teamAffinity);
+      if (data.energyCost !== undefined) filteredData.energyCost = Number(data.energyCost);
+      if (data.damageReduction !== undefined) filteredData.damageReduction = Number(data.damageReduction);
+    }
+    
+    onSubmit(filteredData);
+  });
   
-  document.querySelector('.cancel').onclick = onCancel;
+  // Configurar botón cancelar
+  const cancelBtn = document.querySelector('.cancel');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onCancel();
+    });
+  }
 
   // Función para volver al selector de personajes
   window.showCharacterSelector = () => {

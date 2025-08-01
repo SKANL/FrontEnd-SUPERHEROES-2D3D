@@ -1,5 +1,11 @@
 import { logout } from '../auth/utils.js';
 document.getElementById('logoutBtn')?.addEventListener('click', logout);
+
+// Agregar funcionalidad del botón de regreso al dashboard
+document.getElementById('backToDashboard')?.addEventListener('click', () => {
+  window.location.href = '../dashboard/index.html';
+});
+
 // Gestor de villanos: listar, crear, editar, eliminar
 
 import * as villainApi from './villainApi_dev.js';

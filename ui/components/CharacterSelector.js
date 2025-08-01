@@ -178,6 +178,21 @@ export class CharacterSelector {
             <label for="custom-team">Equipo:</label>
             <input type="text" id="custom-team" placeholder="Nombre del equipo" />
           </div>
+          ${this.currentCharacter && this.currentCharacter.portraits && this.currentCharacter.portraits.length > 1 ? `
+            <div class="field-group">
+              <label for="custom-portrait">Portada:</label>
+              <div class="portrait-selector">
+                ${this.currentCharacter.portraits.map((portrait, index) => `
+                  <div class="portrait-option ${index === 0 ? 'selected' : ''}" data-portrait="${portrait}">
+                    <img src="${portrait}" alt="Portada ${index + 1}" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <div class="portrait-fallback" style="display:none;">🖼️</div>
+                    <span class="portrait-number">${index + 1}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;
@@ -198,6 +213,21 @@ export class CharacterSelector {
           this.selectCharacter(character, card);
         }
       });
+    });
+
+    // Selección de portadas
+    this.container.addEventListener('click', (e) => {
+      if (e.target.closest('.portrait-option')) {
+        const portraitOption = e.target.closest('.portrait-option');
+        
+        // Remover selección anterior
+        this.container.querySelectorAll('.portrait-option').forEach(option => {
+          option.classList.remove('selected');
+        });
+        
+        // Seleccionar nueva portada
+        portraitOption.classList.add('selected');
+      }
     });
 
     // Botones de control
@@ -259,11 +289,17 @@ export class CharacterSelector {
   getCustomizationData() {
     if (!this.options.allowCustomization) return {};
     
+    // Obtener portada seleccionada
+    const selectedPortrait = this.container.querySelector('.portrait-option.selected');
+    const portraitUrl = selectedPortrait ? selectedPortrait.dataset.portrait : 
+                       (this.currentCharacter && this.currentCharacter.portraits ? this.currentCharacter.portraits[0] : null);
+    
     return {
       name: this.container.querySelector('#custom-name')?.value || '',
       alias: this.container.querySelector('#custom-alias')?.value || '',
       city: this.container.querySelector('#custom-city')?.value || '',
-      team: this.container.querySelector('#custom-team')?.value || ''
+      team: this.container.querySelector('#custom-team')?.value || '',
+      selectedPortrait: portraitUrl
     };
   }
 }

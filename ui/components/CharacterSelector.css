@@ -494,3 +494,111 @@
     flex-direction: column;
   }
 }
+.portrait-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.portrait-option {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+}
+
+.portrait-option:hover {
+  border-color: #ffd700;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.portrait-option.selected {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.portrait-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portrait-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 24px;
+  background: linear-gradient(135deg, #333, #222);
+}
+
+.portrait-number {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+/* Mejoras para campos admin-only y readonly */
+.admin-only {
+  border-left: 4px solid #ffd700;
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+  position: relative;
+}
+
+.admin-only::before {
+  content: "👑";
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.readonly {
+  opacity: 0.7;
+  border-left: 4px solid #888;
+  background: linear-gradient(90deg, rgba(136, 136, 136, 0.1), transparent);
+  position: relative;
+}
+
+.readonly::before {
+  content: "🔒";
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+}
+
+.readonly-value {
+  font-weight: bold;
+  color: #ccc;
+}
+
+.admin-only input,
+.admin-only select {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid #ffd700;
+  color: white;
+}
+
+.admin-only input:focus,
+.admin-only select:focus {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  outline: none;
+}

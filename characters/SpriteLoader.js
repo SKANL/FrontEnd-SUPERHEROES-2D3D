@@ -96,6 +96,85 @@ export class SpriteLoader {
         console.log(`Estados de animación disponibles para ${characterName}:`, Object.keys(animations));
         return animations;
     }
+    /**
+     * Busca un personaje en el manifest por nombre parcial o completo
+     * @param {string} searchTerm - Término de búsqueda
+     * @returns {string|null} - Clave encontrada en el manifest o null
+     */
+    findCharacterInManifest(searchTerm) {
+        if (!searchTerm || typeof searchTerm !== 'string') {
+            return null;
+        }
+        
+        const search = searchTerm.toLowerCase();
+        console.log(`Buscando en manifest: "${searchTerm}"`);
+        console.log('Claves disponibles:', Object.keys(manifest));
+        
+        // Búsqueda exacta primero
+        if (manifest[searchTerm]) {
+            console.log(`Encontrado exacto: ${searchTerm}`);
+            return searchTerm;
+        }
+        
+        // Búsqueda por coincidencia de nombres
+        const matches = Object.keys(manifest).filter(key => {
+            const keyLower = key.toLowerCase();
+            return keyLower.includes(search) || search.includes(keyLower);
+        });
+        
+        if (matches.length > 0) {
+            console.log(`Encontradas coincidencias:`, matches);
+            return matches[0]; // Retornar la primera coincidencia
+        }
+        
+        // Búsqueda más específica para personajes conocidos
+        const characterMappings = {
+            'baraka': ['Baraka Complete Edicion', 'Baraka'],
+            'cyrax': ['Cyrax Complete Edicion', 'Cyrax'],
+            'player2': ['player2', 'Cyrax Complete Edicion', 'Baraka Complete Edicion']
+        };
+        
+        if (characterMappings[search]) {
+            for (const mapping of characterMappings[search]) {
+                if (manifest[mapping]) {
+                    console.log(`Encontrado por mapeo: ${mapping}`);
+                    return mapping;
+                }
+            }
+        }
+        
+        console.log(`No se encontró: ${searchTerm}`);
+        return null;
+    }
+
+    /**
+     * Carga sprites con búsqueda inteligente en manifest
+     * @param {string} characterName - Nombre del personaje
+     * @returns {Promise<Object>} - Sprites cargados
+     */
+    async loadSpritesWithFallback(characterName) {
+        try {
+            // Intentar carga directa primero
+            return await this.loadSprites(characterName);
+        } catch (error) {
+            console.warn(`Error cargando "${characterName}", buscando alternativas...`);
+            
+            // Buscar en manifest
+            const foundKey = this.findCharacterInManifest(characterName);
+            if (foundKey) {
+                try {
+                    return await this.loadSprites(foundKey);
+                } catch (e) {
+                    console.warn(`Error cargando alternativa "${foundKey}":`, e);
+                }
+            }
+            
+            // Fallback final
+            console.log('Usando Baraka como fallback final');
+            return await this.loadBarakaSprites();
+        }
+    }
+
     // Alias para compatibilidad: carga sprites de Baraka
     async loadBarakaSprites() {
         // Intentar cargar con el nombre completo

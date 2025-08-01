@@ -18,7 +18,11 @@
 </head>
 <body>
   <div class="container">
-    <h1>Gestor de Villanos</h1>
+    <div class="header-controls">
+      <button id="backToDashboard" class="back-btn">← Volver al Dashboard</button>
+      <h1>Gestor de Villanos</h1>
+      <button id="logoutBtn" class="logout-btn">Cerrar sesión</button>
+    </div>
     <div class="search-bar">
       <input type="text" id="searchVillainCity" placeholder="Buscar por ciudad">
       <button id="btnSearchVillainCity">Buscar ciudad</button>
@@ -28,7 +32,6 @@
     </div>
     <div id="villainsList"></div>
     <div id="villainFormContainer" class="modal hidden"></div>
-  <button id="logoutBtn" style="position:absolute;top:20px;right:20px;background:#ff5252;color:#fff;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer;z-index:1000;">Cerrar sesión</button>
   </div>
   <script type="module" src="manager.js"></script>
   <script type="module">

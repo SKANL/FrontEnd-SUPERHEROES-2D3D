@@ -12,25 +12,26 @@ window.ApiControls = ApiControls;
 // Función para cargar datos completos de personajes basándose en IDs
 async function loadCharacterData(battleData, token) {
     console.log('=== CARGANDO DATOS COMPLETOS DE PERSONAJES ===');
+    console.log('Datos de batalla recibidos:', battleData);
     
     let heroes = [];
     let villains = [];
     
     try {
-        // Si battleData tiene arrays de objetos completos, usarlos directamente
+        // HEROES: Intentar cargar desde múltiples fuentes
         if (battleData.heroes && Array.isArray(battleData.heroes) && 
             battleData.heroes.length > 0 && battleData.heroes[0] && 
             typeof battleData.heroes[0] === 'object' && battleData.heroes[0].id) {
             console.log('Usando datos de héroes completos de la batalla');
             heroes = battleData.heroes;
         } 
-        // Si tiene heroIds, cargar los datos completos
         else if (battleData.heroIds && Array.isArray(battleData.heroIds) && battleData.heroIds.length > 0) {
             console.log('Cargando datos completos de héroes por IDs:', battleData.heroIds);
             for (const heroId of battleData.heroIds) {
                 try {
                     const heroData = await getHeroById(heroId);
                     if (heroData && heroData.id) {
+                        console.log(`Héroe cargado: ${heroData.name} (${heroData.alias}) - GameChar: ${heroData.gameCharacterId || 'No asignado'}`);
                         heroes.push(heroData);
                     }
                 } catch (error) {
@@ -38,13 +39,16 @@ async function loadCharacterData(battleData, token) {
                 }
             }
         }
-        // Si battleData.heroes existe pero no es válido, crear datos simulados
         else if (battleData.heroes && !Array.isArray(battleData.heroes)) {
-            console.warn('battleData.heroes no es un array, creando datos simulados');
-            heroes = [{ id: 'hero-1', name: 'Héroe Simulado', health: 100, power: 50 }];
+            console.log('battleData.heroes no es array, normalizando...');
+            if (typeof battleData.heroes === 'object' && battleData.heroes.id) {
+                heroes = [battleData.heroes];
+            } else {
+                console.warn('battleData.heroes no es un objeto válido');
+            }
         }
         
-        // Misma lógica para villanos
+        // VILLAINS: Misma lógica para villanos
         if (battleData.villains && Array.isArray(battleData.villains) && 
             battleData.villains.length > 0 && battleData.villains[0] &&
             typeof battleData.villains[0] === 'object' && battleData.villains[0].id) {
@@ -57,6 +61,7 @@ async function loadCharacterData(battleData, token) {
                 try {
                     const villainData = await getVillainById(villainId);
                     if (villainData && villainData.id) {
+                        console.log(`Villano cargado: ${villainData.name} (${villainData.alias}) - GameChar: ${villainData.gameCharacterId || 'No asignado'}`);
                         villains.push(villainData);
                     }
                 } catch (error) {
@@ -64,33 +69,80 @@ async function loadCharacterData(battleData, token) {
                 }
             }
         }
-        // Si battleData.villains existe pero no es válido, crear datos simulados
         else if (battleData.villains && !Array.isArray(battleData.villains)) {
-            console.warn('battleData.villains no es un array, creando datos simulados');
-            villains = [{ id: 'villain-1', name: 'Villano Simulado', health: 100, power: 50 }];
+            console.log('battleData.villains no es array, normalizando...');
+            if (typeof battleData.villains === 'object' && battleData.villains.id) {
+                villains = [battleData.villains];
+            } else {
+                console.warn('battleData.villains no es un objeto válido');
+            }
         }
         
-        // Si no tenemos datos suficientes, crear personajes por defecto
+        // Validar que tenemos personajes después de cargar
         if (heroes.length === 0) {
-            console.warn('No se encontraron héroes, creando héroe por defecto');
-            heroes = [{ id: 'default-hero', name: 'Héroe por Defecto', health: 100, power: 50 }];
+            console.warn('No se encontraron héroes válidos');
+            // Verificar si hay IDs de héroes que no se pudieron cargar
+            if (battleData.heroIds && battleData.heroIds.length > 0) {
+                console.error('Error: Héroes no pudieron ser cargados desde la API');
+                throw new Error(`No se pudieron cargar los héroes con IDs: ${battleData.heroIds.join(', ')}`);
+            } else {
+                console.error('Error: No hay héroes definidos en la batalla');
+                throw new Error('La batalla no tiene héroes asignados');
+            }
         }
         
         if (villains.length === 0) {
-            console.warn('No se encontraron villanos, creando villano por defecto');
-            villains = [{ id: 'default-villain', name: 'Villano por Defecto', health: 100, power: 50 }];
+            console.warn('No se encontraron villanos válidos');
+            // Verificar si hay IDs de villanos que no se pudieron cargar
+            if (battleData.villainIds && battleData.villainIds.length > 0) {
+                console.error('Error: Villanos no pudieron ser cargados desde la API');
+                throw new Error(`No se pudieron cargar los villanos con IDs: ${battleData.villainIds.join(', ')}`);
+            } else {
+                console.error('Error: No hay villanos definidos en la batalla');
+                throw new Error('La batalla no tiene villanos asignados');
+            }
         }
+        
+        // Validar información de sprites para cada personaje
+        console.log('=== VALIDACIÓN DE INFORMACIÓN DE SPRITES ===');
+        heroes.forEach((hero, index) => {
+            console.log(`Héroe ${index + 1}:`, {
+                id: hero.id,
+                name: hero.name,
+                alias: hero.alias,
+                gameCharacterId: hero.gameCharacterId,
+                gameCharacterName: hero.gameCharacterName,
+                spriteFolder: hero.spriteFolder
+            });
+            
+            if (!hero.gameCharacterId && !hero.spriteFolder) {
+                console.warn(`Héroe ${hero.name} no tiene información de sprites asignada`);
+            }
+        });
+        
+        villains.forEach((villain, index) => {
+            console.log(`Villano ${index + 1}:`, {
+                id: villain.id,
+                name: villain.name,
+                alias: villain.alias,
+                gameCharacterId: villain.gameCharacterId,
+                gameCharacterName: villain.gameCharacterName,
+                spriteFolder: villain.spriteFolder
+            });
+            
+            if (!villain.gameCharacterId && !villain.spriteFolder) {
+                console.warn(`Villano ${villain.name} no tiene información de sprites asignada`);
+            }
+        });
         
     } catch (error) {
         console.error('Error en loadCharacterData:', error);
-        // Crear datos por defecto en caso de error completo
-        heroes = [{ id: 'fallback-hero', name: 'Héroe de Emergencia', health: 100, power: 50 }];
-        villains = [{ id: 'fallback-villain', name: 'Villano de Emergencia', health: 100, power: 50 }];
+        throw new Error(`Error cargando datos de personajes: ${error.message}`);
     }
     
-    console.log('Datos finales cargados:');
-    console.log('- Heroes:', heroes);
-    console.log('- Villains:', villains);
+    console.log('=== DATOS FINALES CARGADOS ===');
+    console.log('- Heroes:', heroes.length, heroes.map(h => `${h.name} (${h.gameCharacterId || 'sin gameChar'})`));
+    console.log('- Villains:', villains.length, villains.map(v => `${v.name} (${v.gameCharacterId || 'sin gameChar'})`));
     
     return { heroes, villains };
 }
@@ -137,9 +189,56 @@ async function initTeamBattleGame() {
         }
         
         // Verificar que hay personajes disponibles
-        if (!battleData.heroes || !battleData.villains || 
-            battleData.heroes.length === 0 || battleData.villains.length === 0) {
-            throw new Error('La batalla no tiene personajes válidos');
+        console.log('=== VALIDACIÓN DE PERSONAJES ===');
+        console.log('Heroes en battleData:', battleData.heroes);
+        console.log('Villains en battleData:', battleData.villains);
+        console.log('HeroIds en battleData:', battleData.heroIds);
+        console.log('VillainIds en battleData:', battleData.villainIds);
+        
+        // Verificar estructura de datos más detallada
+        const hasHeroes = (battleData.heroes && 
+                          ((Array.isArray(battleData.heroes) && battleData.heroes.length > 0) ||
+                           (typeof battleData.heroes === 'object' && battleData.heroes.id))) ||
+                         (battleData.heroIds && Array.isArray(battleData.heroIds) && battleData.heroIds.length > 0);
+                         
+        const hasVillains = (battleData.villains && 
+                            ((Array.isArray(battleData.villains) && battleData.villains.length > 0) ||
+                             (typeof battleData.villains === 'object' && battleData.villains.id))) ||
+                           (battleData.villainIds && Array.isArray(battleData.villainIds) && battleData.villainIds.length > 0);
+        
+        if (!hasHeroes || !hasVillains) {
+            console.error('=== ERROR: DATOS DE BATALLA INCOMPLETOS ===');
+            console.error('Estructura de battleData:', JSON.stringify(battleData, null, 2));
+            
+            const missingItems = [];
+            if (!hasHeroes) {
+                missingItems.push('héroes');
+                console.error('Problema con héroes:', {
+                    'battleData.heroes': battleData.heroes,
+                    'battleData.heroIds': battleData.heroIds,
+                    'es heroes array?': Array.isArray(battleData.heroes),
+                    'cantidad heroes': battleData.heroes ? battleData.heroes.length : 0,
+                    'es heroIds array?': Array.isArray(battleData.heroIds),
+                    'cantidad heroIds': battleData.heroIds ? battleData.heroIds.length : 0
+                });
+            }
+            if (!hasVillains) {
+                missingItems.push('villanos');
+                console.error('Problema con villanos:', {
+                    'battleData.villains': battleData.villains,
+                    'battleData.villainIds': battleData.villainIds,
+                    'es villains array?': Array.isArray(battleData.villains),
+                    'cantidad villains': battleData.villains ? battleData.villains.length : 0,
+                    'es villainIds array?': Array.isArray(battleData.villainIds),
+                    'cantidad villainIds': battleData.villainIds ? battleData.villainIds.length : 0
+                });
+            }
+            
+            showError(`La batalla no tiene ${missingItems.join(' ni ')} válidos. Verifica que hayas creado y seleccionado personajes en la batalla.`);
+            setTimeout(() => {
+                window.location.href = './index.html';
+            }, 3000);
+            return;
         }
         
         updateLoadingMessage('Actualizando información de la batalla...');
@@ -356,16 +455,88 @@ function updateBattleInfo(battleData) {
     const battleInfo = document.getElementById('battleInfo');
     if (!battleInfo) return;
     
-    // Formatear nombres de personajes
-    const heroNames = battleData.heroes.map(h => h.name || h.alias || 'Héroe').join(', ');
-    const villainNames = battleData.villains.map(v => v.name || v.alias || 'Villano').join(', ');
+    console.log('Actualizando información de batalla en UI:', battleData);
+    
+    // Obtener información de personajes más detallada
+    let heroInfo = 'No disponible';
+    let villainInfo = 'No disponible';
+    
+    try {
+        // Procesar héroes
+        if (battleData.heroes && Array.isArray(battleData.heroes) && battleData.heroes.length > 0) {
+            heroInfo = battleData.heroes.map(h => {
+                const gameChar = h.gameCharacterId ? ` [${h.gameCharacterId}]` : '';
+                return `${h.name || h.alias || 'Héroe'}${gameChar}`;
+            }).join(', ');
+        } else if (battleData.heroIds && Array.isArray(battleData.heroIds)) {
+            heroInfo = `IDs: ${battleData.heroIds.join(', ')} (cargando...)`;
+        }
+        
+        // Procesar villanos
+        if (battleData.villains && Array.isArray(battleData.villains) && battleData.villains.length > 0) {
+            villainInfo = battleData.villains.map(v => {
+                const gameChar = v.gameCharacterId ? ` [${v.gameCharacterId}]` : '';
+                return `${v.name || v.alias || 'Villano'}${gameChar}`;
+            }).join(', ');
+        } else if (battleData.villainIds && Array.isArray(battleData.villainIds)) {
+            villainInfo = `IDs: ${battleData.villainIds.join(', ')} (cargando...)`;
+        }
+    } catch (error) {
+        console.error('Error procesando información de personajes:', error);
+        heroInfo = 'Error cargando';
+        villainInfo = 'Error cargando';
+    }
     
     battleInfo.innerHTML = `
-        <div><strong>Estado:</strong> ${battleData.status || 'Activa'}</div>
-        <div><strong>Modo:</strong> ${battleData.mode || 'Normal'}</div>
-        <div><strong>Héroes:</strong> ${heroNames}</div>
-        <div><strong>Villanos:</strong> ${villainNames}</div>
+        <div class="battle-info-container">
+            <div class="battle-basic-info">
+                <div><strong>Estado:</strong> <span class="status-${(battleData.status || 'active').toLowerCase()}">${battleData.status || 'Activa'}</span></div>
+                <div><strong>Modo:</strong> ${battleData.mode || 'Manual'}</div>
+                <div><strong>ID:</strong> <code>${battleData.id || 'N/A'}</code></div>
+            </div>
+            <div class="battle-characters-info">
+                <div class="heroes-info"><strong>🦸‍♂️ Héroes:</strong> ${heroInfo}</div>
+                <div class="villains-info"><strong>🦹‍♂️ Villanos:</strong> ${villainInfo}</div>
+            </div>
+        </div>
     `;
+    
+    // Agregar estilos inline para mejor visualización
+    const style = document.createElement('style');
+    style.textContent = `
+        .battle-info-container {
+            background: rgba(0,0,0,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .battle-basic-info {
+            margin-bottom: 10px;
+        }
+        .battle-basic-info > div {
+            margin: 5px 0;
+        }
+        .battle-characters-info > div {
+            margin: 8px 0;
+            padding: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        .status-active { color: #4CAF50; }
+        .status-finished { color: #f44336; }
+        .status-paused { color: #FF9800; }
+        code { 
+            background: rgba(0,0,0,0.2); 
+            padding: 2px 4px; 
+            border-radius: 2px; 
+            font-family: monospace; 
+        }
+    `;
+    
+    if (!document.getElementById('battleInfoStyles')) {
+        style.id = 'battleInfoStyles';
+        document.head.appendChild(style);
+    }
 }
 
 // Configurar eventos de la interfaz

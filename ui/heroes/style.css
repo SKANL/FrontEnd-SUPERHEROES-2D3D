@@ -668,3 +668,214 @@ h1 {
   transform: scale(1.07);
   box-shadow: 0 4px 24px #dc354555;
 }
+
+
+/* Estilos para el header con controles */
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 16px 0;
+  border-bottom: 2px solid #444;
+}
+
+.back-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.back-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.logout-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+/* Ajustar h1 dentro del header */
+.header-controls h1 {
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+
+/* Estilos para las imágenes de portada de los personajes */
+.hero-portrait {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 15px;
+  border: 2px solid #444;
+  flex-shrink: 0;
+}
+
+.hero-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.hero-portrait img:hover {
+  transform: scale(1.1);
+}
+
+.hero-icon-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  background: linear-gradient(135deg, #333, #555);
+  color: #fff;
+}
+
+/* Ajustar las tarjetas para incluir la imagen */
+.hero-card {
+  display: flex !important;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.hero-card .game-character-info {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.hero-card .hero-info {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.hero-card .hero-actions {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+
+/* Estilos para campos de administrador y solo lectura */
+.admin-only {
+  border-left: 3px solid #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+  position: relative;
+}
+
+.admin-only::before {
+  content: '👑';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.readonly {
+  background: rgba(100, 100, 100, 0.2);
+  border-left: 3px solid #666;
+}
+
+.readonly-value {
+  color: #ccc;
+  font-style: italic;
+}
+
+.readonly::after {
+  content: '🔒';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8em;
+  opacity: 0.5;
+}
+/* Mejoras adicionales para formularios */
+.hero-detail-card,
+.villain-detail-card {
+  position: relative;
+}
+
+.hero-attr,
+.villain-attr {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.hero-attr input,
+.villain-attr input,
+.hero-attr select,
+.villain-attr select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.hero-attr input:focus,
+.villain-attr input:focus,
+.hero-attr select:focus,
+.villain-attr select:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.hero-attr.admin-only input,
+.villain-attr.admin-only input,
+.hero-attr.admin-only select,
+.villain-attr.admin-only select {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: #ffd700;
+}
+
+.hero-attr.admin-only input:focus,
+.villain-attr.admin-only input:focus,
+.hero-attr.admin-only select:focus,
+.villain-attr.admin-only select:focus {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.hero-attr.readonly,
+.villain-attr.readonly {
+  opacity: 0.8;
+  background: linear-gradient(90deg, rgba(136, 136, 136, 0.1), transparent);
+}

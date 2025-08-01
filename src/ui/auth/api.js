@@ -2,8 +2,10 @@
 // Lógica de comunicación con la API con fallback para desarrollo
 
 // Configuración de la API
-const API_BASE_URL = 'https://api-superheroes-production.up.railway.app';
 const DEVELOPMENT_MODE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const API_BASE_URL = DEVELOPMENT_MODE 
+    ? 'https://api-superheroes-production.up.railway.app' 
+    : '';
 
 // Datos de prueba para desarrollo
 const DEMO_USERS = {

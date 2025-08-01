@@ -9,6 +9,21 @@
 [build.environment]
   NODE_VERSION = "18.18.0"
 
+# JSON FILES FIRST - CRÍTICO PARA EVITAR CONFUSIÓN CON MODULES
+[[headers]]
+  for = "/spriteManifest.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+    X-Content-Type-Options = "nosniff"
+
 # HEADERS MUY ESPECÍFICOS - SIN POSIBILIDAD DE ERROR
 [[headers]]
   for = "/ui/auth/index.html"
